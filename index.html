@@ -858,6 +858,7 @@
                 }
             });
 
+
             const addSistemaToProjectBtn = document.getElementById('add-sistema-to-project-btn');
             if (addSistemaToProjectBtn) {
                 addSistemaToProjectBtn.addEventListener('click', () => {
@@ -892,6 +893,8 @@
                     updateModuleAssignmentUI();
                 });
             }
+
+
 
             ['import-team-btn', 'import-sistema-btn', 'import-client-btn'].forEach(id => {
                 const button = document.getElementById(id);
