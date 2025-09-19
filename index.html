@@ -153,8 +153,30 @@
                     <div class="overflow-x-auto"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Cliente / Projeto</th><th class="p-3">Status</th><th class="p-3">Progresso</th><th class="p-3">Ações</th></tr></thead><tbody id="projects-table-body"></tbody></table></div>
                 </div>
                 <div class="bg-[#1E2A47] p-6 rounded-xl">
-                     <h3 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="trophy" class="text-yellow-400"></i> Gamificação da Equipe</h3>
-                    <div id="gamification-container" class="space-y-4 max-h-80 overflow-y-auto"></div>
+                    <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><i data-lucide="settings-2" class="text-cyan-400"></i> Gestão Rápida</h3>
+                    <p class="text-slate-400 text-sm mb-4">Acesse e gerencie cadastros essenciais diretamente do dashboard.</p>
+                    <div class="space-y-3" id="dashboard-shortcuts">
+                        <button data-dashboard-shortcut data-target-view="cadastros-view" data-target-tab="equipes" class="w-full flex items-center justify-between bg-slate-700/60 hover:bg-slate-600 text-left px-4 py-3 rounded-lg transition-colors">
+                            <span class="flex items-center gap-2"><i data-lucide="users"></i> Equipes</span>
+                            <i data-lucide="arrow-up-right"></i>
+                        </button>
+                        <button data-dashboard-shortcut data-target-view="cadastros-view" data-target-tab="sistemas" class="w-full flex items-center justify-between bg-slate-700/60 hover:bg-slate-600 text-left px-4 py-3 rounded-lg transition-colors">
+                            <span class="flex items-center gap-2"><i data-lucide="cpu"></i> Sistemas</span>
+                            <i data-lucide="arrow-up-right"></i>
+                        </button>
+                        <button data-dashboard-shortcut data-target-view="cadastros-view" data-target-tab="clientes" class="w-full flex items-center justify-between bg-slate-700/60 hover:bg-slate-600 text-left px-4 py-3 rounded-lg transition-colors">
+                            <span class="flex items-center gap-2"><i data-lucide="building-2"></i> Clientes</span>
+                            <i data-lucide="arrow-up-right"></i>
+                        </button>
+                        <button data-dashboard-shortcut data-target-view="mensagens-view" data-action="trigger-button" data-target-button="add-mensagem-btn" class="w-full flex items-center justify-between bg-slate-700/60 hover:bg-slate-600 text-left px-4 py-3 rounded-lg transition-colors">
+                            <span class="flex items-center gap-2"><i data-lucide="message-circle"></i> Mensagens Personalizadas</span>
+                            <i data-lucide="arrow-up-right"></i>
+                        </button>
+                        <button data-dashboard-shortcut data-target-view="dashboard-view" data-action="trigger-button" data-target-button="add-project-btn" class="w-full flex items-center justify-between bg-slate-700/60 hover:bg-slate-600 text-left px-4 py-3 rounded-lg transition-colors">
+                            <span class="flex items-center gap-2"><i data-lucide="folder-plus"></i> Novo Projeto</span>
+                            <i data-lucide="arrow-up-right"></i>
+                        </button>
+                    </div>
                 </div>
             </section>
         </div>
@@ -218,8 +240,8 @@
     </main>
 
     <!-- Modal para Adicionar/Editar Projeto -->
-    <div id="project-modal" class="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-start overflow-y-auto hidden z-50 p-4 pt-16">
-        <div class="bg-[#1E2A47] p-8 rounded-xl w-full max-w-7xl transform transition-all scale-95 opacity-0" id="project-modal-content">
+    <div id="project-modal" class="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center overflow-y-auto hidden z-50 p-4 pt-16">
+        <div class="bg-[#1E2A47] p-6 md:p-8 rounded-xl w-full max-w-5xl lg:max-w-6xl 2xl:max-w-7xl max-h-[85vh] overflow-y-auto transform transition-all scale-95 opacity-0" id="project-modal-content">
             <div class="flex justify-between items-center mb-6"><h3 id="project-modal-title" class="text-2xl font-bold"></h3><button id="close-modal-btn" class="text-slate-400"><i data-lucide="x-circle"></i></button></div>
             <form id="project-form">
                 <input type="hidden" id="projectId">
@@ -383,6 +405,7 @@
                     const config = [
                         { field: 'nome', keys: ['nome', 'name'], defaultIndex: 0 },
                         { field: 'cargo', keys: ['função', 'funcao', 'cargo', 'role'], defaultIndex: 1 },
+                        { field: 'teamName', keys: ['equipe', 'time', 'squad', 'tribo'] },
                         { field: 'email', keys: ['e-mail', 'email'], defaultIndex: 2 },
                         { field: 'telefone', keys: ['telefone', 'phone', 'celular', 'whatsapp'], defaultIndex: 3 },
                     ];
@@ -391,11 +414,13 @@
                         const cargo = sanitizeText(values.cargo);
                         if (!nome || !cargo) return null;
                         const email = sanitizeText(values.email);
+                        const teamName = sanitizeText(values.teamName);
                         const telefone = normalizeNumericString(values.telefone);
                         return {
                             id: generateUniqueId('TM'),
                             nome,
                             cargo,
+                            teamName,
                             email,
                             telefone,
                             avatar: generateAvatarInitials(nome),
@@ -458,6 +483,7 @@
                 renderProjects(); renderTeam(); renderSistemas(); renderClientes(); renderStatuses();
                 renderReports(); updateKPIs(); analyzeDataForAI(); renderIdeias();
                 renderWhatsappMessages();
+                setupDashboardShortcuts();
                 lucide.createIcons();
             }
 
@@ -518,8 +544,10 @@
                     container.innerHTML += `<div class="bg-[#1E2A47] p-5 rounded-xl card-hover-effect text-center flex flex-col justify-between">
                         <div>
                             <div class="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 mx-auto flex items-center justify-center text-3xl font-bold mb-4">${m.avatar}</div>
-                            <h4 class="font-bold text-lg">${m.nome}</h4><p class="text-blue-300 text-sm mb-3">${m.cargo}</p>
-                            <div class="flex flex-wrap justify-center gap-2">${(m.skills || []).map(s => `<span class="bg-slate-700 text-slate-300 text-xs px-2.5 py-1 rounded-full">${s}</span>`).join('')}</div>
+                            <h4 class="font-bold text-lg">${m.nome}</h4>
+                            <p class="text-blue-300 text-sm">${m.cargo}</p>
+                            ${m.teamName ? `<p class=\"text-slate-400 text-xs uppercase tracking-wide mt-1\">Equipe ${m.teamName}</p>` : ''}
+                            <div class="flex flex-wrap justify-center gap-2 mt-3">${(m.skills || []).map(s => `<span class="bg-slate-700 text-slate-300 text-xs px-2.5 py-1 rounded-full">${s}</span>`).join('')}</div>
                         </div>
                         <div class="border-t border-slate-700 mt-4 pt-4 flex justify-center gap-4">
                             <button data-type="whatsapp" data-id="${m.id}" title="WhatsApp" class="text-green-400 hover:text-green-300"><i data-lucide="message-square"></i></button>
@@ -630,31 +658,6 @@
                 });
             }
             
-            function renderGamification() {
-                const container = document.getElementById('gamification-container');
-                if(!container) return;
-                container.innerHTML = '';
-                const nonManagers = teamMembers.filter(m => m.cargo && !m.cargo.toLowerCase().includes('gerente'));
-                const scores = nonManagers.map(member => {
-                    const completedProjects = projects.filter(p => p.equipe.some(e => e.memberId === member.id) && p.statusId === 'ST5');
-                    const score = completedProjects.length * 10;
-                    return { name: member.nome, score: score, avatar: member.avatar };
-                });
-
-                scores.sort((a, b) => b.score - a.score).forEach((item, index) => {
-                    const medals = ['🥇', '🥈', '🥉'];
-                    container.innerHTML += `<div class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-800">
-                        <div class="flex items-center gap-3">
-                            <span class="font-bold text-lg w-8 text-center">${medals[index] || index + 1}</span>
-                            <div class="w-8 h-8 rounded-full bg-blue-800 flex items-center justify-center text-xs font-bold">${item.avatar}</div>
-                            <span>${item.name}</span>
-                        </div>
-                        <span class="font-bold text-cyan-400">${item.score} pts</span>
-                    </div>`;
-                });
-            }
-
-
             // --- LÓGICA GERAL DE MODAIS ---
             function openGenericModal(modalElement) { modalElement.classList.remove('hidden'); setTimeout(() => modalElement.querySelector('div:first-child').classList.remove('scale-95', 'opacity-0'), 10); }
             function closeGenericModal(modalElement) { modalElement.querySelector('div:first-child').classList.add('scale-95', 'opacity-0'); setTimeout(() => modalElement.classList.add('hidden'), 300); }
@@ -923,13 +926,13 @@
                 
                 modalTitle.textContent = mode === 'add' ? `Adicionar ${type.charAt(0).toUpperCase() + type.slice(1)}` : `Editar ${type.charAt(0).toUpperCase() + type.slice(1)}`;
 
-                if (type === 'team') formContent.innerHTML = `<div><label>Nome</label><input name="nome" value="${item.nome || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Cargo</label><input name="cargo" value="${item.cargo || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>E-mail</label><input type="email" name="email" value="${item.email || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg"></div><div><label>Telefone (com DDI, ex: 5534...)</label><input type="tel" name="telefone" value="${item.telefone || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg"></div><div><label>Habilidades (separadas por vírgula)</label><input name="skills" value="${(item.skills || []).join(', ')}" class="w-full bg-slate-700 p-2.5 rounded-lg"></div>`;
+                if (type === 'team') formContent.innerHTML = `<div><label>Nome</label><input name="nome" value="${item.nome || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Cargo</label><input name="cargo" value="${item.cargo || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Nome da Equipe</label><input name="teamName" value="${item.teamName || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" placeholder="Ex.: Squad Financeiro"></div><div><label>E-mail</label><input type="email" name="email" value="${item.email || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg"></div><div><label>Telefone (com DDI, ex: 5534...)</label><input type="tel" name="telefone" value="${item.telefone || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg"></div><div><label>Habilidades (separadas por vírgula)</label><input name="skills" value="${(item.skills || []).join(', ')}" class="w-full bg-slate-700 p-2.5 rounded-lg"></div>`;
                 if (type === 'sistema') formContent.innerHTML = `<div><label>Nome do Sistema</label><input name="nome" value="${item.nome || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Tipo</label><input name="tipo" value="${item.tipo || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div>`;
                 if (type === 'cliente') formContent.innerHTML = `<div><label>Nome do Cliente</label><input name="nome" value="${item.nome || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Cidade</label><input name="cidade" value="${item.cidade || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Responsável</label><input name="responsavel" value="${item.responsavel || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div>`;
                 if (type === 'status') formContent.innerHTML = `<div><label>Nome do Status</label><input name="text" value="${item.text || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Cor</label><input name="color" type="color" value="${item.color || '#64748B'}" class="w-full h-10 p-1 bg-slate-700 rounded-lg"></div>`;
                 if (type === 'ideia') formContent.innerHTML = `<div><label>Título da Ideia</label><input name="titulo" value="${item.titulo || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Categoria</label><input name="categoria" value="${item.categoria || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg"></div><div><label>Descrição</label><textarea name="descricao" rows="4" class="w-full bg-slate-700 p-2.5 rounded-lg">${item.descricao || ''}</textarea></div><div><label>Status</label><select name="status" class="w-full bg-slate-700 p-2.5 rounded-lg"><option>Nova</option><option>Em Análise</option><option>Aprovada</option><option>Rejeitada</option></select></div>`;
                 if (type === 'kb') formContent.innerHTML = `<div><label>Título do Artigo</label><input name="titulo" value="${item.titulo || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Categoria</label><input name="categoria" value="${item.categoria || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg"></div><div><label>Conteúdo</label><textarea name="conteudo" rows="6" class="w-full bg-slate-700 p-2.5 rounded-lg">${item.conteudo || ''}</textarea></div>`;
-                if (type === 'mensagem') formContent.innerHTML = `<div><label>Título da Mensagem</label><input name="title" value="${item.title || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Texto da Mensagem</label><textarea name="text" rows="4" class="w-full bg-slate-700 p-2.5 rounded-lg" placeholder="Use [NOME] para o nome do destinatário.">${item.text || ''}</textarea></div>`;
+                if (type === 'mensagem') formContent.innerHTML = `<div><label>Título da Mensagem</label><input name="title" value="${item.title || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Texto da Mensagem</label><textarea name="text" rows="4" class="w-full bg-slate-700 p-2.5 rounded-lg" placeholder="Use [NOME] para o nome do destinatário e [EQUIPE] para o nome da equipe.">${item.text || ''}</textarea></div>`;
 
                 openGenericModal(editModal);
             }
@@ -945,11 +948,12 @@
                     else arr.push({ ...itemData, id: type.charAt(0).toUpperCase() + Date.now().toString().slice(-4) });
                 };
 
-                if (type === 'team') { 
-                    data.skills = data.skills.split(',').map(s=>s.trim()).filter(Boolean); 
+                if (type === 'team') {
+                    data.teamName = (data.teamName || '').trim();
+                    data.skills = (data.skills || '').split(',').map(s=>s.trim()).filter(Boolean);
                     data.avatar = generateAvatarInitials(data.nome);
-                    data.telefone = data.telefone.replace(/\D/g,''); 
-                    updateOrAdd(teamMembers, data); 
+                    data.telefone = (data.telefone || '').replace(/\D/g,'');
+                    updateOrAdd(teamMembers, data);
                 }
                 if (type === 'sistema') updateOrAdd(sistemas, data);
                 if (type === 'cliente') updateOrAdd(clientes, data);
@@ -1036,6 +1040,40 @@
             });
             
             // --- LÓGICA DE NAVEGAÇÃO E TABS ---
+            function navigateToView(viewId) {
+                if (!viewId) return;
+                const navLink = document.querySelector(`aside nav a[data-target="${viewId}"]`);
+                if (navLink) {
+                    navLink.click();
+                } else {
+                    document.querySelectorAll('main > div[data-view]').forEach(view => view.classList.add('hidden'));
+                    document.getElementById(viewId)?.classList.remove('hidden');
+                }
+            }
+
+            function setupDashboardShortcuts() {
+                document.querySelectorAll('[data-dashboard-shortcut]').forEach(button => {
+                    if (button.dataset.initialized) return;
+                    button.dataset.initialized = 'true';
+                    button.addEventListener('click', () => {
+                        const { targetView, targetTab, action, targetButton } = button.dataset;
+                        if (targetView) {
+                            navigateToView(targetView);
+                        }
+                        if (targetTab) {
+                            setTimeout(() => {
+                                document.querySelector(`.tab-link[data-tab="${targetTab}"]`)?.click();
+                            }, 60);
+                        }
+                        if (action === 'trigger-button' && targetButton) {
+                            setTimeout(() => {
+                                document.getElementById(targetButton)?.click();
+                            }, 120);
+                        }
+                    });
+                });
+            }
+
             document.querySelectorAll('aside nav a').forEach(link => {
                 link.addEventListener('click', e => {
                     e.preventDefault();
@@ -1072,7 +1110,7 @@
                 newOkBtn.addEventListener('click', () => { callback(); closeGenericModal(confirmModal); });
             }
             document.getElementById('confirm-cancel-btn').addEventListener('click', () => closeGenericModal(confirmModal));
-            
+
             // --- WHATSAPP MODAL ---
             const whatsappModal = document.getElementById('whatsapp-modal');
             document.getElementById('close-whatsapp-modal-btn').addEventListener('click', () => closeGenericModal(whatsappModal));
@@ -1088,7 +1126,11 @@
                         btn.className = 'w-full text-left p-3 bg-slate-700 hover:bg-slate-600 rounded-lg';
                         btn.innerHTML = `<div class="font-bold">${msg.title}</div><p class="text-sm text-slate-400 truncate">${msg.text}</p>`;
                         btn.onclick = () => {
-                            const messageText = msg.text.replace(/\[NOME\]/g, member.nome.split(' ')[0]);
+                            const firstName = (member.nome || '').split(' ')[0] || member.nome;
+                            const teamName = member.teamName || 'sua equipe';
+                            const messageText = msg.text
+                                .replace(/\[NOME\]/g, firstName)
+                                .replace(/\[EQUIPE\]/g, teamName);
                             const url = `https://wa.me/${member.telefone}?text=${encodeURIComponent(messageText)}`;
                             window.open(url, '_blank');
                             closeGenericModal(whatsappModal);
@@ -1187,6 +1229,7 @@
 
 
             // --- INICIALIZAÇÃO ---
+            setupDashboardShortcuts();
             document.querySelector('[data-target="dashboard-view"]').click();
             renderAll();
             setInterval(analyzeDataForAI, 10000);
