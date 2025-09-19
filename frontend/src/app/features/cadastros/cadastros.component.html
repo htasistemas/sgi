@@ -1,0 +1,81 @@
+<section class="cadastros">
+  <aside class="sidebar">
+    <h2>Cadastros Gerais</h2>
+    <nav>
+      <button
+        *ngFor="let entity of entities"
+        type="button"
+        class="nav-button"
+        [class.active]="selectedEntity() === entity"
+        (click)="selectEntity(entity)"
+      >
+        {{ ENTITY_CONFIG[entity].title }}
+      </button>
+    </nav>
+  </aside>
+
+  <main>
+    <header class="main-header">
+      <div>
+        <h3>{{ config().title }}</h3>
+        <p>{{ config().emptyMessage }}</p>
+      </div>
+      <div class="actions">
+        <label class="import-button">
+          <input type="file" accept=".xlsx,.xls" (change)="handleImport($event)" />
+          Importar
+        </label>
+        <button type="button" (click)="startNew()" class="secondary">
+          Novo
+        </button>
+      </div>
+    </header>
+
+    <section class="feedback" *ngIf="feedbackMessage()">{{ feedbackMessage() }}</section>
+    <section class="loader" *ngIf="isLoading()">Carregando...</section>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="entity-form">
+      <div class="field" *ngFor="let field of config().fields">
+        <label [for]="field.key">{{ field.label }}</label>
+        <input
+          [id]="field.key"
+          [type]="field.type ?? 'text'"
+          [formControlName]="field.key"
+          [class.invalid]="form.get(field.key)?.invalid && form.get(field.key)?.touched"
+        />
+      </div>
+      <div class="form-actions">
+        <button type="submit">{{ editingId ? 'Salvar alterações' : 'Adicionar' }}</button>
+        <button type="button" class="secondary" (click)="cancelEditing()" *ngIf="editingId">Cancelar</button>
+      </div>
+    </form>
+
+    <section class="list" *ngIf="items().length > 0; else emptyState">
+      <table>
+        <thead>
+          <tr>
+            <th *ngFor="let field of config().fields">{{ field.label }}</th>
+            <th class="actions-column">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of items()">
+            <td *ngFor="let field of config().fields">
+              <ng-container [ngSwitch]="field.type">
+                <span *ngSwitchCase="'color'" class="color-preview" [style.background]="getColorValue(item, field.key)"></span>
+                <span *ngSwitchDefault>{{ getDisplayValue(item, field.key) }}</span>
+              </ng-container>
+            </td>
+            <td class="actions-column">
+              <button type="button" class="secondary" (click)="edit(item)">Editar</button>
+              <button type="button" class="danger" (click)="remove(item)">Excluir</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <ng-template #emptyState>
+      <p class="empty">{{ config().emptyMessage }}</p>
+    </ng-template>
+  </main>
+</section>
