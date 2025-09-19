@@ -111,7 +111,7 @@
                 <div>
                     <h1 class="text-2xl font-bold text-white leading-tight">SGI.<span class="text-cyan-400">AI</span></h1>
 
-                    <p class="text-xs text-slate-300 tracking-wide">Versão 1.4</p>
+                    <p class="text-xs text-slate-300 tracking-wide">Versão 1.5</p>
 
                 </div>
             </div>
@@ -164,7 +164,7 @@
             <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-2 bg-[#1E2A47] p-6 rounded-xl">
                     <h3 class="text-xl font-bold mb-4">Acompanhamento de Implantações</h3>
-                    <div class="overflow-x-auto"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Cliente / Projeto</th><th class="p-3">Status</th><th class="p-3">Progresso</th><th class="p-3">Ações</th></tr></thead><tbody id="projects-table-body"></tbody></table></div>
+                    <div class="overflow-x-auto"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Cliente / Projeto</th><th class="p-3">Status</th><th class="p-3">Progresso</th><th class="p-3">Detalhes</th><th class="p-3">Ações</th></tr></thead><tbody id="projects-table-body"></tbody></table></div>
                 </div>
                 <div class="bg-[#1E2A47] p-6 rounded-xl">
                     <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><i data-lucide="settings-2" class="text-cyan-400"></i> Gestão Rápida</h3>
@@ -436,6 +436,7 @@
                 }
             }
 
+
             const storageAvailable = (() => {
                 try {
                     if (typeof localStorage === 'undefined') return false;
@@ -478,6 +479,7 @@
                 }
             }
 
+
             // --- LÓGICA DE RENDERIZAÇÃO ---
             let chartInstances = {};
 
@@ -514,12 +516,22 @@
                 }).filter(Boolean);
             }
 
-            function isModuleAllowedForMember(member, sistema) {
+            function isModuleWithinSkills(member, sistema) {
                 if (!sistema) return false;
                 const skills = Array.isArray(member?.skills) ? member.skills.filter(Boolean) : [];
                 if (skills.length === 0) return true;
                 const sistemaName = normalizeComparisonText(sistema.nome);
                 return skills.some(skill => sistemaName.includes(normalizeComparisonText(skill)));
+            }
+
+            function formatModuleBadge(sistemaId, member = null) {
+                const sistema = sistemas.find(s => s.id === sistemaId);
+                if (!sistema) return '';
+                const compatible = member ? isModuleWithinSkills(member, sistema) : true;
+                const baseClasses = 'text-xs px-2 py-1 rounded-full whitespace-nowrap';
+                const styleClasses = compatible ? 'bg-slate-600 text-slate-200' : 'bg-amber-500/20 text-amber-200 border border-amber-400/30';
+                const label = compatible ? sistema.nome : `${sistema.nome} (*)`;
+                return `<span class="${baseClasses} ${styleClasses}">${label}</span>`;
             }
 
             function getStatusPill(statusId) {
@@ -735,30 +747,61 @@
                 tableBody.innerHTML = ''; projectCardsContainer.innerHTML = ''; 
                 projects.forEach(p => {
                     const cliente = clientes.find(c => c.id === p.clienteId);
+                    const assignments = normalizeProjectAssignments(p);
                     const projectSistemas = (p.sistemasIds || []).map(sId => sistemas.find(s => s.id === sId)?.nome).filter(Boolean).join(', ');
+                    const moduleSummaryBadges = ((p.sistemasIds || []).map(sId => formatModuleBadge(sId)).filter(Boolean).join(' ')) || '<span class="text-xs text-slate-500">Nenhum módulo cadastrado.</span>';
+                    const gerenteComercial = teamMembers.find(tm => tm.id === p.gerCom)?.nome || 'Não atribuído';
+                    const gerenteTecnico = teamMembers.find(tm => tm.id === p.gerTec)?.nome || 'Não atribuído';
+                    const equipeResumo = assignments.length
+                        ? assignments.map(assignment => {
+                            const member = teamMembers.find(m => m.id === assignment.memberId);
+                            if (!member) return '';
+                            const badges = (assignment.sistemasIds || []).map(sId => formatModuleBadge(sId, member)).filter(Boolean).join(' ');
+                            const badgeContent = badges || '<span class="text-xs text-slate-500">Sem módulos atribuídos.</span>';
+                            return `<div class="text-sm text-slate-200">
+                                        <div class="font-semibold text-slate-100">${member.nome}</div>
+                                        <div class="flex flex-wrap gap-2 mt-1">${badgeContent}</div>
+                                    </div>`;
+                        }).join('')
+                        : '<p class="text-xs text-slate-500">Nenhum membro atribuído.</p>';
 
-                    const tableRowHTML = `<tr class="hover:bg-slate-700/50">
-                            <td class="p-3"><div class="font-bold">${cliente?.nome || 'N/A'}</div><div class="text-sm text-slate-400">${projectSistemas.substring(0, 30)}...</div></td>
-                            <td class="p-3">${getStatusPill(p.statusId)}</td>
-                            <td class="p-3">
+                    const detalhesHTML = `<div class="space-y-3">
+                            <div>
+                                <p class="text-xs uppercase tracking-wide text-slate-400">Módulos do projeto</p>
+                                <div class="flex flex-wrap gap-2 mt-1">${moduleSummaryBadges}</div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div class="text-xs text-slate-400 uppercase tracking-wide">Ger. Comercial<div class="text-sm text-slate-200 normal-case tracking-normal">${gerenteComercial}</div></div>
+                                <div class="text-xs text-slate-400 uppercase tracking-wide">Ger. Técnica<div class="text-sm text-slate-200 normal-case tracking-normal">${gerenteTecnico}</div></div>
+                            </div>
+                            <div>
+                                <p class="text-xs uppercase tracking-wide text-slate-400">Equipe responsável</p>
+                                <div class="mt-2 space-y-2">${equipeResumo}</div>
+                            </div>
+                        </div>`;
+
+                    const tableRowHTML = `<tr class="hover:bg-slate-700/50 align-top">
+                            <td class="p-3 align-top">
+                                <div class="font-bold">${cliente?.nome || 'N/A'}</div>
+                                <div class="text-sm text-slate-400">${p.cidade || 'Cidade não informada'}</div>
+                            </td>
+                            <td class="p-3 align-top">${getStatusPill(p.statusId)}</td>
+                            <td class="p-3 align-top">
                                 <div class="w-full bg-slate-600 rounded-full h-2.5"><div class="bg-gradient-to-r from-cyan-400 to-blue-500 h-2.5 rounded-full" style="width: ${p.progresso}%"></div></div>
                                 <div class="text-right text-sm mt-1">${p.progresso}%</div>
                             </td>
-                            <td class="p-3">
+                            <td class="p-3 align-top">${detalhesHTML}</td>
+                            <td class="p-3 align-top">
                                <button class="edit-btn" data-type="project" data-id="${p.id}"><i data-lucide="edit" class="text-cyan-400"></i></button>
                                <button class="delete-btn ml-2" data-type="project" data-id="${p.id}"><i data-lucide="trash-2" class="text-red-400"></i></button>
                             </td>
                         </tr>`;
                     tableBody.innerHTML += tableRowHTML;
-                    
-                    const assignments = normalizeProjectAssignments(p);
+
                     const responsaveisHTML = assignments.map(assignment => {
                         const member = teamMembers.find(m => m.id === assignment.memberId);
                         if (!member) return '';
-                        const assignedSistemas = (assignment.sistemasIds || []).map(sId => {
-                            const sistema = sistemas.find(s => s.id === sId);
-                            return `<span class="text-xs bg-slate-600 px-2 py-1 rounded-full whitespace-nowrap">${sistema?.nome || 'N/A'}</span>`;
-                        }).join(' ');
+                        const assignedSistemas = (assignment.sistemasIds || []).map(sId => formatModuleBadge(sId, member)).filter(Boolean).join(' ');
 
                         return `<div class="space-y-1 text-sm">
                                     <div class="font-semibold text-slate-100">${member.nome}</div>
@@ -1079,14 +1122,21 @@
                 }
             }
 
-            function createModuleChipElement(sistemaId) {
+            function createModuleChipElement(sistemaId, member = null) {
                 const sistema = sistemas.find(s => s.id === sistemaId);
                 if (!sistema) return null;
+                const compatible = member ? isModuleWithinSkills(member, sistema) : true;
                 const chip = document.createElement('span');
                 chip.dataset.role = 'assigned-chip';
                 chip.dataset.sistemaId = sistemaId;
-                chip.className = 'sistema-chip flex items-center gap-2 bg-cyan-500/20 text-cyan-200 px-3 py-1 rounded-full text-sm';
-                chip.innerHTML = `<span>${sistema.nome}</span><button type="button" data-action="remove-member-module" class="leading-none"><i data-lucide="x" class="w-4 h-4"></i></button>`;
+                chip.dataset.compatible = compatible ? 'true' : 'false';
+                const baseClasses = 'sistema-chip flex items-center gap-2 px-3 py-1 rounded-full text-sm';
+                chip.className = compatible ? `${baseClasses} bg-cyan-500/20 text-cyan-200` : `${baseClasses} bg-amber-500/20 text-amber-200 border border-amber-400/30`;
+                const label = compatible ? sistema.nome : `${sistema.nome} (*)`;
+                chip.innerHTML = `<span>${label}</span><button type="button" data-action="remove-member-module" class="leading-none"><i data-lucide="x" class="w-4 h-4"></i></button>`;
+                if (!compatible) {
+                    chip.title = 'Módulo fora das habilidades cadastradas para este membro.';
+                }
                 return chip;
             }
 
@@ -1100,19 +1150,18 @@
                 const memberId = wrapper.dataset.memberId;
                 const member = teamMembers.find(m => m.id === memberId);
                 const projectSystemIds = getSelectedProjectSystemIds();
-                const allowedIds = projectSystemIds.filter(id => {
-                    const sistema = sistemas.find(s => s.id === id);
-                    return sistema && isModuleAllowedForMember(member, sistema);
-                });
-                const availableIds = allowedIds.filter(id => !assignedIds.includes(id));
+                const availableIds = projectSystemIds.filter(id => !assignedIds.includes(id) && sistemas.some(s => s.id === id));
+                let incompatibleCount = 0;
 
                 picker.innerHTML = '<option value="">Adicionar módulo...</option>';
                 availableIds.forEach(id => {
                     const sistema = sistemas.find(s => s.id === id);
                     if (!sistema) return;
+                    const compatible = isModuleWithinSkills(member, sistema);
+                    if (!compatible) incompatibleCount++;
                     const option = document.createElement('option');
                     option.value = id;
-                    option.textContent = sistema.nome;
+                    option.textContent = compatible ? sistema.nome : `${sistema.nome} (*)`;
                     picker.appendChild(option);
                 });
 
@@ -1121,7 +1170,10 @@
                 picker.classList.toggle('opacity-50', availableIds.length === 0);
                 if (hint) {
                     if (availableIds.length === 0) {
-                        hint.textContent = allowedIds.length === 0 ? 'Nenhum módulo compatível com as habilidades cadastradas.' : 'Todos os módulos compatíveis já foram atribuídos para este membro.';
+                        hint.textContent = 'Todos os módulos selecionados já foram atribuídos para este membro.';
+                        hint.classList.remove('hidden');
+                    } else if (incompatibleCount > 0) {
+                        hint.textContent = 'Opções marcadas com (*) não fazem parte das habilidades cadastradas.';
                         hint.classList.remove('hidden');
                     } else {
                         hint.classList.add('hidden');
@@ -1173,11 +1225,7 @@
                         selectedSystemsForMember = existingAssignments[member.id].filter(id => selectedSistemasIds.includes(id));
                     }
 
-
-                    selectedSystemsForMember = Array.from(new Set(selectedSystemsForMember)).filter(id => {
-                        const sistema = sistemas.find(s => s.id === id);
-                        return sistema && isModuleAllowedForMember(member, sistema);
-                    });
+                    selectedSystemsForMember = Array.from(new Set(selectedSystemsForMember)).filter(id => sistemas.some(s => s.id === id));
 
                     const wrapper = document.createElement('div');
                     wrapper.className = 'space-y-3 border border-slate-700 rounded-lg p-4';
@@ -1199,7 +1247,7 @@
                     assignedList.className = 'flex flex-wrap gap-2';
                     assignedList.dataset.role = 'assigned-list';
                     selectedSystemsForMember.forEach(id => {
-                        const chip = createModuleChipElement(id);
+                        const chip = createModuleChipElement(id, member);
                         if (chip) assignedList.appendChild(chip);
                     });
                     wrapper.appendChild(assignedList);
@@ -1235,7 +1283,9 @@
                             select.value = '';
                             return;
                         }
-                        const chip = createModuleChipElement(value);
+                        const memberId = wrapper.dataset.memberId;
+                        const member = teamMembers.find(m => m.id === memberId);
+                        const chip = createModuleChipElement(value, member);
                         if (!chip) return;
                         const emptyState = list.querySelector('[data-role="empty-state"]');
                         if (emptyState) emptyState.remove();
@@ -1382,7 +1432,7 @@
                 if (type === 'status') formContent.innerHTML = `<div><label>Nome do Status</label><input name="text" value="${item.text || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Cor</label><input name="color" type="color" value="${item.color || '#64748B'}" class="w-full h-10 p-1 bg-slate-700 rounded-lg"></div>`;
                 if (type === 'ideia') formContent.innerHTML = `<div><label>Título da Ideia</label><input name="titulo" value="${item.titulo || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Categoria</label><input name="categoria" value="${item.categoria || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg"></div><div><label>Descrição</label><textarea name="descricao" rows="4" class="w-full bg-slate-700 p-2.5 rounded-lg">${item.descricao || ''}</textarea></div><div><label>Status</label><select name="status" class="w-full bg-slate-700 p-2.5 rounded-lg"><option>Nova</option><option>Em Análise</option><option>Aprovada</option><option>Rejeitada</option></select></div>`;
                 if (type === 'kb') formContent.innerHTML = `<div><label>Título do Artigo</label><input name="titulo" value="${item.titulo || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Categoria</label><input name="categoria" value="${item.categoria || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg"></div><div><label>Conteúdo</label><textarea name="conteudo" rows="6" class="w-full bg-slate-700 p-2.5 rounded-lg">${item.conteudo || ''}</textarea></div>`;
-                if (type === 'mensagem') formContent.innerHTML = `<div><label>Título da Mensagem</label><input name="title" value="${item.title || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Texto da Mensagem</label><textarea name="text" rows="4" class="w-full bg-slate-700 p-2.5 rounded-lg" placeholder="Use [NOME] para o nome do destinatário e [EQUIPE] para o nome da equipe.">${item.text || ''}</textarea></div>`;
+                if (type === 'mensagem') formContent.innerHTML = `<div><label>Título da Mensagem</label><input name="title" value="${item.title || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Texto da Mensagem</label><textarea name="text" rows="4" class="w-full bg-slate-700 p-2.5 rounded-lg" placeholder="Use [NOME] para o nome do destinatário e [EQUIPE] para o nome da equipe." required>${item.text || ''}</textarea></div>`;
 
                 openGenericModal(editModal);
             }
@@ -1410,7 +1460,17 @@
                 if (type === 'status') updateOrAdd(statuses, data);
                 if (type === 'ideia') updateOrAdd(ideias, data);
                 if (type === 'kb') updateOrAdd(knowledgeBase, data);
-                if (type === 'mensagem') updateOrAdd(whatsappMessages, data);
+                if (type === 'mensagem') {
+                    data.text = (data.text || '').trim();
+                    if (!data.text) {
+                        alert('Informe o texto da mensagem.');
+                        return;
+                    }
+                    if (!/\[NOME\]/i.test(data.text)) {
+                        data.text = `Olá [NOME], ${data.text}`;
+                    }
+                    updateOrAdd(whatsappMessages, data);
+                }
 
                 renderAll();
                 closeGenericModal(editModal);
@@ -1584,9 +1644,23 @@
                         btn.onclick = () => {
                             const firstName = (member.nome || '').split(' ')[0] || member.nome;
                             const teamName = member.teamName || 'sua equipe';
-                            const messageText = msg.text
-                                .replace(/\[NOME\]/g, firstName)
-                                .replace(/\[EQUIPE\]/g, teamName);
+                            let messageText = (msg.text || '').trim();
+                            const hasNamePlaceholder = /\[NOME\]/i.test(messageText);
+                            const hasTeamPlaceholder = /\[EQUIPE\]/i.test(messageText);
+
+                            if (!hasNamePlaceholder) {
+                                const greeting = `Olá ${firstName}`;
+                                messageText = messageText ? `${greeting}, ${messageText}` : `${greeting}!`;
+                            }
+
+                            messageText = messageText
+                                .replace(/\[NOME\]/gi, firstName)
+                                .replace(/\[EQUIPE\]/gi, teamName);
+
+                            if (!hasTeamPlaceholder && teamName && teamName !== 'sua equipe') {
+                                messageText = `${messageText} (Equipe: ${teamName})`;
+                            }
+
                             const url = `https://wa.me/${member.telefone}?text=${encodeURIComponent(messageText)}`;
                             window.open(url, '_blank');
                             closeGenericModal(whatsappModal);
