@@ -88,6 +88,15 @@
             border-radius: 0.5rem;
             padding: 1rem;
         }
+
+        .tab-link-active {
+            color: #2DD4BF !important;
+            border-color: #2DD4BF !important;
+            background: linear-gradient(90deg, rgba(45, 212, 191, 0.12), rgba(59, 130, 246, 0.12));
+            box-shadow: 0 12px 24px rgba(45, 212, 191, 0.18);
+            border-radius: 0.5rem;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
     </style>
 </head>
 <body class="flex antialiased">
@@ -99,7 +108,10 @@
                 <div class="p-2 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg">
                     <i data-lucide="sitemap" class="text-white"></i>
                 </div>
-                <h1 class="text-2xl font-bold text-white">SGI.<span class="text-cyan-400">AI</span></h1>
+                <div>
+                    <h1 class="text-2xl font-bold text-white leading-tight">SGI.<span class="text-cyan-400">AI</span></h1>
+                    <p class="text-xs text-slate-300 tracking-wide">Versão 1.4</p>
+                </div>
             </div>
             <nav>
                 <ul class="space-y-1">
@@ -217,8 +229,8 @@
         <!-- ########## VIEW: CADASTROS ########## -->
         <div id="cadastros-view" data-view class="hidden">
             <header class="flex justify-between items-center mb-8"><h2 class="text-3xl font-bold text-white">Cadastros Gerais ⚙️</h2></header>
-            <div class="mb-6 border-b border-slate-700"><nav class="flex space-x-8" aria-label="Tabs"><a href="#" data-tab="equipes" class="tab-link text-cyan-400 border-cyan-400 py-4 px-1 border-b-2 font-medium text-lg">Equipes</a><a href="#" data-tab="sistemas" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-4 px-1 border-b-2 font-medium text-lg">Sistemas</a><a href="#" data-tab="clientes" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-4 px-1 border-b-2 font-medium text-lg">Clientes</a><a href="#" data-tab="status" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-4 px-1 border-b-2 font-medium text-lg">Status</a></nav></div>
-            <div id="equipes-tab" class="tab-content"><header class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold">Membros da Equipe</h3><div class="flex items-center gap-4"><button id="import-team-btn" data-import-type="team" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-team-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="user-plus"></i> Adicionar</button></div></header><section id="team-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></section></div>
+            <div class="mb-6 border-b border-slate-700"><nav class="flex space-x-4 md:space-x-8" aria-label="Tabs"><a href="#" data-tab="equipes" class="tab-link tab-link-active text-cyan-400 border-cyan-400 py-3 px-3 md:py-4 md:px-4 border-b-2 font-medium text-lg">Equipes</a><a href="#" data-tab="sistemas" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-3 px-3 md:py-4 md:px-4 border-b-2 font-medium text-lg">Sistemas</a><a href="#" data-tab="clientes" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-3 px-3 md:py-4 md:px-4 border-b-2 font-medium text-lg">Clientes</a><a href="#" data-tab="status" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-3 px-3 md:py-4 md:px-4 border-b-2 font-medium text-lg">Status</a></nav></div>
+            <div id="equipes-tab" class="tab-content"><header class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4"><div class="flex flex-col lg:flex-row lg:items-center gap-3 w-full lg:w-auto"><h3 class="text-xl font-bold">Membros da Equipe</h3><div class="relative w-full lg:w-72"><input type="search" id="team-search-input" placeholder="Buscar por nome..." class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2.5 px-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-400" aria-label="Buscar membros da equipe"></div></div><div class="flex items-center gap-4 self-end lg:self-auto"><button id="import-team-btn" data-import-type="team" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-team-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="user-plus"></i> Adicionar</button></div></header><section id="team-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></section></div>
             <div id="sistemas-tab" class="tab-content hidden"><div class="flex justify-end mb-4 gap-4"><button id="import-sistema-btn" data-import-type="sistema" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-sistema-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus"></i> Adicionar Sistema</button></div><section class="bg-[#1E2A47] p-6 rounded-xl"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Nome do Sistema</th><th class="p-3">Tipo</th><th class="p-3 text-right">Ações</th></tr></thead><tbody id="sistemas-table-body"></tbody></table></section></div>
             <div id="clientes-tab" class="tab-content hidden"><div class="flex justify-end mb-4 gap-4"><button id="import-client-btn" data-import-type="cliente" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-cliente-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus"></i> Adicionar Cliente</button></div><section class="bg-[#1E2A47] p-6 rounded-xl"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Nome do Cliente</th><th class="p-3">Cidade</th><th class="p-3">Responsável</th><th class="p-3 text-right">Ações</th></tr></thead><tbody id="clientes-table-body"></tbody></table></section></div>
             <div id="status-tab" class="tab-content hidden"><div class="flex justify-end mb-4"><button id="add-status-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus"></i> Adicionar Status</button></div><section class="bg-[#1E2A47] p-6 rounded-xl"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Nome do Status</th><th class="p-3">Cor</th><th class="p-3 text-right">Ações</th></tr></thead><tbody id="status-table-body"></tbody></table></section></div>
@@ -326,15 +338,25 @@
             let teamMembers = [];
             let sistemas = [];
             let clientes = [];
-            let statuses = [
+            const STORAGE_KEY = 'sgi-ai-data';
+            const DEFAULT_STATUSES = [
                 { id: "ST1", text: "Planejamento", color: "#64748B" }, { id: "ST2", text: "Execução", color: "#3B82F6" },
                 { id: "ST3", text: "Homologação", color: "#A855F7" }, { id: "ST4", text: "Risco", color: "#EF4444" },
                 { id: "ST5", text: "Concluído", color: "#22C55E" },
             ];
+            let statuses = [...DEFAULT_STATUSES];
             let projects = [];
             let ideias = [];
             let knowledgeBase = [];
             let whatsappMessages = [];
+            const normalizeText = (text) => typeof text === 'string' ? text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() : '';
+            const escapeHTML = (text) => typeof text === 'string' ? text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;') : '';
+            let teamSearchTerm = '';
             const defaultMessageSuggestions = [
                 {
                     id: 'suggestion-welcome',
@@ -360,6 +382,55 @@
             let importContext = null;
 
             const importInput = document.getElementById('import-input');
+            const teamSearchInput = document.getElementById('team-search-input');
+            if (teamSearchInput) {
+                teamSearchInput.addEventListener('input', event => {
+                    teamSearchTerm = event.target.value || '';
+                    renderTeam();
+                });
+            }
+
+            const storageAvailable = (() => {
+                try {
+                    if (typeof localStorage === 'undefined') return false;
+                    const testKey = '__sgi_ai_storage_test__';
+                    localStorage.setItem(testKey, '1');
+                    localStorage.removeItem(testKey);
+                    return true;
+                } catch (error) {
+                    console.warn('Persistência local indisponível:', error);
+                    return false;
+                }
+            })();
+
+            function saveData() {
+                if (!storageAvailable) return;
+                try {
+                    const payload = { projects, teamMembers, sistemas, clientes, statuses, ideias, knowledgeBase, whatsappMessages };
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+                } catch (error) {
+                    console.warn('Não foi possível salvar os dados localmente.', error);
+                }
+            }
+
+            function loadPersistedData() {
+                if (!storageAvailable) return;
+                try {
+                    const stored = localStorage.getItem(STORAGE_KEY);
+                    if (!stored) return;
+                    const data = JSON.parse(stored);
+                    if (Array.isArray(data.teamMembers)) teamMembers = data.teamMembers;
+                    if (Array.isArray(data.sistemas)) sistemas = data.sistemas;
+                    if (Array.isArray(data.clientes)) clientes = data.clientes;
+                    if (Array.isArray(data.statuses)) statuses = data.statuses.length ? data.statuses : [...DEFAULT_STATUSES];
+                    if (Array.isArray(data.projects)) projects = data.projects;
+                    if (Array.isArray(data.ideias)) ideias = data.ideias;
+                    if (Array.isArray(data.knowledgeBase)) knowledgeBase = data.knowledgeBase;
+                    if (Array.isArray(data.whatsappMessages)) whatsappMessages = data.whatsappMessages;
+                } catch (error) {
+                    console.warn('Não foi possível carregar os dados salvos.', error);
+                }
+            }
 
             // --- LÓGICA DE RENDERIZAÇÃO ---
             let chartInstances = {};
@@ -591,6 +662,7 @@
                     return;
                 }
                 whatsappMessages.push({ id: generateUniqueId('MSG'), title: suggestion.title, text: suggestion.text });
+                saveData();
                 renderWhatsappMessages();
                 renderMessageSuggestions();
                 lucide.createIcons();
@@ -600,13 +672,14 @@
             function renderAll() {
                 ensureProjectsHaveAssignmentsStructure();
                 renderProjects(); renderTeam(); renderSistemas(); renderClientes(); renderStatuses();
-                renderReports(); updateKPIs(); analyzeDataForAI(); renderIdeias();
+                renderReports(); updateKPIs(); analyzeDataForAI(); renderIdeias(); renderKB();
                 renderWhatsappMessages();
 
                 renderMessageSuggestions();
 
                 setupDashboardShortcuts();
                 lucide.createIcons();
+                saveData();
             }
 
             function renderProjects() {
@@ -663,7 +736,19 @@
                 const container = document.getElementById('team-cards-container');
                 if(!container) return;
                 container.innerHTML = '';
-                teamMembers.forEach(m => {
+                const normalizedTerm = normalizeText(teamSearchTerm.trim());
+                const filteredMembers = normalizedTerm ? teamMembers.filter(m => normalizeText(m.nome).includes(normalizedTerm)) : [...teamMembers];
+
+                if (filteredMembers.length === 0) {
+                    const sanitizedTerm = escapeHTML(teamSearchTerm.trim());
+                    const message = normalizedTerm
+                        ? `Nenhum membro encontrado para <span class="text-slate-200 font-semibold">&ldquo;${sanitizedTerm}&rdquo;</span>.`
+                        : 'Nenhum membro cadastrado até o momento.';
+                    container.innerHTML = `<div class="col-span-full bg-[#1E2A47] p-6 rounded-xl text-center text-slate-400">${message}</div>`;
+                    return;
+                }
+
+                filteredMembers.forEach(m => {
                     container.innerHTML += `<div class="bg-[#1E2A47] p-5 rounded-xl card-hover-effect text-center flex flex-col justify-between">
                         <div>
                             <div class="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 mx-auto flex items-center justify-center text-3xl font-bold mb-4">${m.avatar}</div>
@@ -680,6 +765,7 @@
                         </div>
                     </div>`;
                 });
+                lucide.createIcons();
             }
 
             function renderGenericTable(tbodyId, data, columns, type) {
@@ -1413,8 +1499,12 @@
                     const targetTabId = e.currentTarget.dataset.tab + '-tab';
                     document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
                     document.getElementById(targetTabId).classList.remove('hidden');
-                    document.querySelectorAll('.tab-link').forEach(t => { t.classList.remove('text-cyan-400', 'border-cyan-400'); t.classList.add('text-slate-400', 'border-transparent'); });
-                    e.currentTarget.classList.add('text-cyan-400', 'border-cyan-400');
+                    document.querySelectorAll('.tab-link').forEach(t => {
+                        t.classList.remove('text-cyan-400', 'border-cyan-400', 'tab-link-active');
+                        t.classList.add('text-slate-400', 'border-transparent');
+                    });
+                    e.currentTarget.classList.add('text-cyan-400', 'border-cyan-400', 'tab-link-active');
+                    e.currentTarget.classList.remove('text-slate-400', 'border-transparent');
                 });
             });
             
@@ -1477,8 +1567,14 @@
                     try {
                         const data = JSON.parse(re.target.result);
                         if (data.projects && data.teamMembers && data.sistemas && data.clientes && data.statuses) {
-                            projects = data.projects; teamMembers = data.teamMembers; sistemas = data.sistemas; clientes = data.clientes; statuses = data.statuses;
-                            ideias = data.ideias || []; knowledgeBase = data.knowledgeBase || []; whatsappMessages = data.whatsappMessages || [];
+                            projects = data.projects;
+                            teamMembers = data.teamMembers;
+                            sistemas = data.sistemas;
+                            clientes = data.clientes;
+                            statuses = Array.isArray(data.statuses) && data.statuses.length ? data.statuses : [...DEFAULT_STATUSES];
+                            ideias = data.ideias || [];
+                            knowledgeBase = data.knowledgeBase || [];
+                            whatsappMessages = data.whatsappMessages || [];
                             renderAll(); alert('Backup restaurado!');
                         } else { alert('Arquivo de backup inválido.'); }
                     } catch (err) { alert('Erro ao ler o arquivo.'); }
@@ -1549,6 +1645,7 @@
 
 
             // --- INICIALIZAÇÃO ---
+            loadPersistedData();
             setupDashboardShortcuts();
             document.querySelector('[data-target="dashboard-view"]').click();
             renderAll();
