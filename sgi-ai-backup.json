@@ -1,0 +1,123 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "clienteId": "C01",
+      "cidade": "Araguari - MG",
+      "gerTec": "AS",
+      "gerCom": "CM",
+      "sistemasIds": [
+        "S01"
+      ],
+      "statusId": "ST2",
+      "progresso": 75,
+      "equipe": [
+        "AS",
+        "BC",
+        "FL"
+      ],
+      "observacoes": [],
+      "dataInicio": "2025-08-01",
+      "dataPrevisao": "2025-11-30"
+    }
+  ],
+  "teamMembers": [
+    {
+      "id": "JL",
+      "nome": "Adriano Martins Torres",
+      "cargo": "Gerente Técnico",
+      "avatar": "AD",
+      "skills": [
+        "Gestor"
+      ],
+      "email": "adriano@sonner.com.br",
+      "telefone": "34992693522"
+    }
+  ],
+  "sistemas": [
+    {
+      "id": "S01",
+      "nome": "Sonner Cidades (ERP)",
+      "tipo": "ERP"
+    },
+    {
+      "id": "S02",
+      "nome": "Sonner Tributário",
+      "tipo": "Gestão Fiscal"
+    },
+    {
+      "id": "S03",
+      "nome": "BI para Sonner Saúde",
+      "tipo": "BI"
+    },
+    {
+      "id": "S04",
+      "nome": "Sonner Saúde Plena",
+      "tipo": "Gestão de Saúde"
+    },
+    {
+      "id": "S05",
+      "nome": "Sonner RH Folha",
+      "tipo": "RH"
+    }
+  ],
+  "clientes": [
+    {
+      "id": "C01",
+      "nome": "Prefeitura de Araguari",
+      "cidade": "Araguari - MG",
+      "responsavel": "João da Silva"
+    },
+    {
+      "id": "C02",
+      "nome": "Secretaria de Finanças SP",
+      "cidade": "São Paulo - SP",
+      "responsavel": "Maria Oliveira"
+    },
+    {
+      "id": "C03",
+      "nome": "Consórcio de Saúde SC",
+      "cidade": "Joinville - SC",
+      "responsavel": "Pedro Santos"
+    },
+    {
+      "id": "C04",
+      "nome": "Hospital Municipal de Recife",
+      "cidade": "Recife - PE",
+      "responsavel": "Ana Costa"
+    },
+    {
+      "id": "C05",
+      "nome": "Câmara de Vereadores de Cuiabá",
+      "cidade": "Cuiabá - MT",
+      "responsavel": "Lucas Souza"
+    }
+  ],
+  "statuses": [
+    {
+      "id": "ST1",
+      "text": "Planejamento",
+      "color": "#64748B"
+    },
+    {
+      "id": "ST2",
+      "text": "Execução",
+      "color": "#3B82F6"
+    },
+    {
+      "id": "ST3",
+      "text": "Homologação",
+      "color": "#A855F7"
+    },
+    {
+      "id": "ST4",
+      "text": "Risco",
+      "color": "#EF4444"
+    },
+    {
+      "id": "ST5",
+      "text": "Concluído",
+      "color": "#22C55E"
+    }
+  ]
+}
