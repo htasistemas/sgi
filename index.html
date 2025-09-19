@@ -110,7 +110,9 @@
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold text-white leading-tight">SGI.<span class="text-cyan-400">AI</span></h1>
+
                     <p class="text-xs text-slate-300 tracking-wide">Versão 1.5</p>
+
                 </div>
             </div>
             <nav>
@@ -230,7 +232,9 @@
         <div id="cadastros-view" data-view class="hidden">
             <header class="flex justify-between items-center mb-8"><h2 class="text-3xl font-bold text-white">Cadastros Gerais ⚙️</h2></header>
             <div class="mb-6 border-b border-slate-700"><nav class="flex space-x-4 md:space-x-8" aria-label="Tabs"><a href="#" data-tab="equipes" class="tab-link tab-link-active text-cyan-400 border-cyan-400 py-3 px-3 md:py-4 md:px-4 border-b-2 font-medium text-lg">Equipes</a><a href="#" data-tab="sistemas" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-3 px-3 md:py-4 md:px-4 border-b-2 font-medium text-lg">Sistemas</a><a href="#" data-tab="clientes" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-3 px-3 md:py-4 md:px-4 border-b-2 font-medium text-lg">Clientes</a><a href="#" data-tab="status" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-3 px-3 md:py-4 md:px-4 border-b-2 font-medium text-lg">Status</a></nav></div>
+
             <div id="equipes-tab" class="tab-content"><header class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4"><div class="flex flex-col lg:flex-row lg:items-center gap-3 w-full lg:w-auto"><h3 class="text-xl font-bold">Membros da Equipe</h3><div class="relative w-full lg:w-72"><input type="search" id="team-search-input" placeholder="Buscar por nome..." class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2.5 px-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-400" aria-label="Buscar membros da equipe"></div></div><div class="flex items-center gap-4 self-end lg:self-auto"><button id="import-team-btn" data-import-type="team" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-team-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="user-plus"></i> Adicionar</button></div></header><section id="team-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></section></div>
+
             <div id="sistemas-tab" class="tab-content hidden"><div class="flex justify-end mb-4 gap-4"><button id="import-sistema-btn" data-import-type="sistema" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-sistema-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus"></i> Adicionar Sistema</button></div><section class="bg-[#1E2A47] p-6 rounded-xl"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Nome do Sistema</th><th class="p-3">Tipo</th><th class="p-3 text-right">Ações</th></tr></thead><tbody id="sistemas-table-body"></tbody></table></section></div>
             <div id="clientes-tab" class="tab-content hidden"><div class="flex justify-end mb-4 gap-4"><button id="import-client-btn" data-import-type="cliente" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-cliente-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus"></i> Adicionar Cliente</button></div><section class="bg-[#1E2A47] p-6 rounded-xl"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Nome do Cliente</th><th class="p-3">Cidade</th><th class="p-3">Responsável</th><th class="p-3 text-right">Ações</th></tr></thead><tbody id="clientes-table-body"></tbody></table></section></div>
             <div id="status-tab" class="tab-content hidden"><div class="flex justify-end mb-4"><button id="add-status-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus"></i> Adicionar Status</button></div><section class="bg-[#1E2A47] p-6 rounded-xl"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Nome do Status</th><th class="p-3">Cor</th><th class="p-3 text-right">Ações</th></tr></thead><tbody id="status-table-body"></tbody></table></section></div>
@@ -431,6 +435,50 @@
                     console.warn('Não foi possível carregar os dados salvos.', error);
                 }
             }
+
+
+            const storageAvailable = (() => {
+                try {
+                    if (typeof localStorage === 'undefined') return false;
+                    const testKey = '__sgi_ai_storage_test__';
+                    localStorage.setItem(testKey, '1');
+                    localStorage.removeItem(testKey);
+                    return true;
+                } catch (error) {
+                    console.warn('Persistência local indisponível:', error);
+                    return false;
+                }
+            })();
+
+            function saveData() {
+                if (!storageAvailable) return;
+                try {
+                    const payload = { projects, teamMembers, sistemas, clientes, statuses, ideias, knowledgeBase, whatsappMessages };
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+                } catch (error) {
+                    console.warn('Não foi possível salvar os dados localmente.', error);
+                }
+            }
+
+            function loadPersistedData() {
+                if (!storageAvailable) return;
+                try {
+                    const stored = localStorage.getItem(STORAGE_KEY);
+                    if (!stored) return;
+                    const data = JSON.parse(stored);
+                    if (Array.isArray(data.teamMembers)) teamMembers = data.teamMembers;
+                    if (Array.isArray(data.sistemas)) sistemas = data.sistemas;
+                    if (Array.isArray(data.clientes)) clientes = data.clientes;
+                    if (Array.isArray(data.statuses)) statuses = data.statuses.length ? data.statuses : [...DEFAULT_STATUSES];
+                    if (Array.isArray(data.projects)) projects = data.projects;
+                    if (Array.isArray(data.ideias)) ideias = data.ideias;
+                    if (Array.isArray(data.knowledgeBase)) knowledgeBase = data.knowledgeBase;
+                    if (Array.isArray(data.whatsappMessages)) whatsappMessages = data.whatsappMessages;
+                } catch (error) {
+                    console.warn('Não foi possível carregar os dados salvos.', error);
+                }
+            }
+
 
             // --- LÓGICA DE RENDERIZAÇÃO ---
             let chartInstances = {};
