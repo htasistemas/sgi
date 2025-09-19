@@ -602,7 +602,9 @@
                 renderProjects(); renderTeam(); renderSistemas(); renderClientes(); renderStatuses();
                 renderReports(); updateKPIs(); analyzeDataForAI(); renderIdeias();
                 renderWhatsappMessages();
+
                 renderMessageSuggestions();
+
                 setupDashboardShortcuts();
                 lucide.createIcons();
             }
@@ -810,7 +812,9 @@
                 const equipe = [];
                 document.querySelectorAll('#module-assignment-container [data-member-assignment]').forEach(wrapper => {
                     const memberId = wrapper.dataset.memberId;
+
                     const sistemasIds = Array.from(wrapper.querySelectorAll('[data-role="assigned-chip"]')).map(chip => chip.dataset.sistemaId);
+
                     if (sistemasIds.length > 0) {
                         equipe.push({ memberId, sistemasIds });
                     }
@@ -912,7 +916,9 @@
                 if (!wrapper) return;
                 const countSpan = wrapper.querySelector('[data-role="assignment-count"]');
                 if (!countSpan) return;
+
                 const total = wrapper.querySelectorAll('[data-role="assigned-chip"]').length;
+
                 countSpan.textContent = formatAssignmentCountLabel(total);
             }
 
@@ -920,6 +926,7 @@
                 if (!container) return;
                 container.querySelectorAll('[data-member-assignment]').forEach(wrapper => refreshMemberAssignmentCount(wrapper));
             }
+
 
             function getSelectedProjectSystemIds() {
                 return Array.from(document.querySelectorAll('#sistemas-tags-container .sistema-tag')).map(tag => tag.dataset.id);
@@ -990,17 +997,22 @@
                 }
             }
 
+
             function updateModuleAssignmentUI(project = null) {
                 const assignmentContainer = document.getElementById('module-assignment-container');
                 if(!assignmentContainer) return;
 
+
                 const selectedSistemasIds = getSelectedProjectSystemIds();
                 const selectedTeamCheckboxes = Array.from(document.querySelectorAll('#equipe-checkboxes input:checked'));
+
 
                 const existingAssignments = {};
                 assignmentContainer.querySelectorAll('[data-member-assignment]').forEach(wrapper => {
                     const memberId = wrapper.dataset.memberId;
+
                     existingAssignments[memberId] = Array.from(wrapper.querySelectorAll('[data-role="assigned-chip"]')).map(chip => chip.dataset.sistemaId);
+
                 });
 
                 assignmentContainer.innerHTML = '';
@@ -1028,6 +1040,7 @@
                     } else if (existingAssignments[member.id]) {
                         selectedSystemsForMember = existingAssignments[member.id].filter(id => selectedSistemasIds.includes(id));
                     }
+
 
                     selectedSystemsForMember = Array.from(new Set(selectedSystemsForMember)).filter(id => {
                         const sistema = sistemas.find(s => s.id === id);
@@ -1071,11 +1084,13 @@
                 });
 
                 lucide.createIcons();
+
             }
 
             const moduleAssignmentContainer = document.getElementById('module-assignment-container');
             if (moduleAssignmentContainer && !moduleAssignmentContainer.dataset.listenerAttached) {
                 moduleAssignmentContainer.addEventListener('change', event => {
+
                     if (event.target.matches('select[data-role="module-picker"]')) {
                         const select = event.target;
                         const value = select.value;
@@ -1124,6 +1139,7 @@
                     handleSuggestionSelection(suggestionId);
                 });
                 messageSuggestionsContainer.dataset.listenerAttached = 'true';
+
             }
             
             function renderKanban(project) {
