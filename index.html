@@ -555,6 +555,95 @@
                 return imported.length;
             }
 
+            async function fetchSheetRows(path) {
+                const response = await fetch(path, { cache: 'no-store' });
+                if (!response.ok) throw new Error(`Falha ao carregar "${path}": ${response.status}`);
+                const text = await response.text();
+                const workbook = XLSX.read(text, { type: 'string' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                return XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' })
+                    .filter(row => Array.isArray(row) && row.some(cell => sanitizeText(cell) !== ''));
+            }
+
+            async function loadSampleCSVsIfNeeded() {
+                const sources = [
+                    { path: 'Equipe.csv', type: 'team', hasData: () => teamMembers.length > 0 },
+                    { path: 'Sistemas.csv', type: 'sistema', hasData: () => sistemas.length > 0 },
+                    { path: 'cliente.csv', type: 'cliente', hasData: () => clientes.length > 0 },
+                ];
+
+                for (const source of sources) {
+                    if (source.hasData()) continue;
+                    try {
+                        const rows = await fetchSheetRows(source.path);
+                        if (rows.length) handleImportData(source.type, rows);
+                    } catch (error) {
+                        console.warn(`Não foi possível carregar o arquivo "${source.path}" automaticamente.`, error);
+                    }
+                }
+            }
+
+            async function loadInitialBackupData() {
+                try {
+                    const response = await fetch('sgi-ai-backup.json', { cache: 'no-store' });
+                    if (!response.ok) return;
+                    const data = await response.json();
+
+                    if (Array.isArray(data.teamMembers) && data.teamMembers.length) {
+                        teamMembers = data.teamMembers.map(member => ({
+                            ...member,
+                            avatar: member.avatar || generateAvatarInitials(member.nome),
+                            skills: Array.isArray(member.skills) ? member.skills.filter(Boolean) : [],
+                            telefone: normalizeNumericString(member.telefone),
+                        }));
+                    }
+
+                    if (Array.isArray(data.sistemas) && data.sistemas.length) {
+                        sistemas = data.sistemas.map(sistema => ({
+                            ...sistema,
+                            id: sanitizeText(sistema.id) || generateUniqueId('SIS'),
+                            nome: sanitizeText(sistema.nome) || 'Sistema sem nome',
+                            tipo: sanitizeText(sistema.tipo) || 'Não informado',
+                        }));
+                    }
+
+                    if (Array.isArray(data.clientes) && data.clientes.length) {
+                        clientes = data.clientes.map(cliente => ({
+                            ...cliente,
+                            id: sanitizeText(cliente.id) || generateUniqueId('CL'),
+                            nome: sanitizeText(cliente.nome) || 'Cliente sem nome',
+                            cidade: sanitizeText(cliente.cidade) || 'Não informado',
+                            responsavel: sanitizeText(cliente.responsavel) || 'Não informado',
+                        }));
+                    }
+
+                    if (Array.isArray(data.statuses) && data.statuses.length) {
+                        statuses = data.statuses.map(status => ({
+                            ...status,
+                            id: sanitizeText(status.id) || generateUniqueId('ST'),
+                            text: sanitizeText(status.text) || 'Status',
+                            color: sanitizeText(status.color) || '#64748B',
+                        }));
+                    }
+
+                    if (Array.isArray(data.projects) && data.projects.length) {
+                        projects = data.projects.map(project => ({
+                            ...project,
+                            sistemasIds: Array.isArray(project.sistemasIds) ? project.sistemasIds.filter(Boolean) : [],
+                            equipe: Array.isArray(project.equipe) ? project.equipe : [],
+                            observacoes: Array.isArray(project.observacoes) ? project.observacoes : [],
+                        }));
+                    }
+
+                    ideias = Array.isArray(data.ideias) ? data.ideias : ideias;
+                    knowledgeBase = Array.isArray(data.knowledgeBase) ? data.knowledgeBase : knowledgeBase;
+                    whatsappMessages = Array.isArray(data.whatsappMessages) ? data.whatsappMessages : whatsappMessages;
+                } catch (error) {
+                    console.warn('Não foi possível carregar o backup inicial de dados.', error);
+                }
+            }
+
             function ensureProjectsHaveAssignmentsStructure() {
                 projects.forEach((project, index) => {
                     if (!project || typeof project !== 'object') return;
@@ -1549,10 +1638,21 @@
 
 
             // --- INICIALIZAÇÃO ---
+            async function initializeApp() {
+                try {
+                    await loadInitialBackupData();
+                    await loadSampleCSVsIfNeeded();
+                } catch (error) {
+                    console.error('Erro ao inicializar dados padrão.', error);
+                } finally {
+                    renderAll();
+                    setInterval(analyzeDataForAI, 10000);
+                }
+            }
+
             setupDashboardShortcuts();
-            document.querySelector('[data-target="dashboard-view"]').click();
-            renderAll();
-            setInterval(analyzeDataForAI, 10000);
+            document.querySelector('[data-target="dashboard-view"]')?.click();
+            initializeApp();
         });
     </script>
 </body>
