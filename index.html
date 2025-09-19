@@ -745,6 +745,27 @@
             }
             function populateStatusSelect(selectedStatusId = '') { populateSelect('status-select', statuses, 'id', 'text', selectedStatusId); }
             function populateSistemasSelect(selectId) { populateSelect(selectId, sistemas, 'id', 'nome');}
+
+            function renderSistemasTags(containerId, sistemasIds = []) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                container.innerHTML = '';
+                const uniqueIds = [...new Set(sistemasIds)];
+
+                uniqueIds.forEach(id => {
+                    const sistema = sistemas.find(s => s.id === id);
+                    if (!sistema) return;
+
+                    const tag = document.createElement('span');
+                    tag.className = 'sistema-tag flex items-center gap-2 bg-cyan-500/20 text-cyan-200 px-3 py-1 rounded-full text-sm';
+                    tag.dataset.id = id;
+                    tag.innerHTML = `<span>${sistema.nome}</span><button type="button" data-action="remove-sistema" class="leading-none"><i data-lucide="x" class="w-4 h-4"></i></button>`;
+                    container.appendChild(tag);
+                });
+
+                lucide.createIcons();
+            }
             
             function populateTeamCheckboxes(containerId, selectedMemberIds = []) {
                 const container = document.getElementById(containerId);
@@ -763,6 +784,10 @@
                 if(!assignmentContainer) return;
                 const selectedSistemasIds = Array.from(document.querySelectorAll('#sistemas-tags-container .sistema-tag')).map(tag => tag.dataset.id);
                 const selectedTeamCheckboxes = document.querySelectorAll('#equipe-checkboxes input:checked');
+                const existingAssignments = {};
+                document.querySelectorAll('#module-assignment-container select[data-member-id]').forEach(select => {
+                    existingAssignments[select.dataset.memberId] = Array.from(select.selectedOptions).map(opt => opt.value);
+                });
                 assignmentContainer.innerHTML = '';
 
                 if (selectedSistemasIds.length === 0 || selectedTeamCheckboxes.length === 0) {
@@ -776,6 +801,8 @@
                     if (project && project.equipe) {
                         const assignment = project.equipe.find(e => e.memberId === member.id);
                         if (assignment) selectedSystemsForMember = assignment.sistemasIds;
+                    } else if (existingAssignments[member.id]) {
+                        selectedSystemsForMember = existingAssignments[member.id].filter(id => selectedSistemasIds.includes(id));
                     }
 
                     const selectOptionsHTML = selectedSistemasIds.map(sId => {
@@ -830,6 +857,44 @@
                     button.addEventListener('click', () => openEditModalFor(id.split('-')[1], null, 'add'));
                 }
             });
+
+
+            const addSistemaToProjectBtn = document.getElementById('add-sistema-to-project-btn');
+            if (addSistemaToProjectBtn) {
+                addSistemaToProjectBtn.addEventListener('click', () => {
+                    const select = document.getElementById('sistemas-select-add');
+                    const selectedId = select?.value;
+                    if (!selectedId) {
+                        alert('Selecione um sistema para adicionar ao projeto.');
+                        return;
+                    }
+
+                    const currentIds = Array.from(document.querySelectorAll('#sistemas-tags-container .sistema-tag')).map(tag => tag.dataset.id);
+                    if (currentIds.includes(selectedId)) {
+                        alert('Este sistema já foi adicionado ao projeto.');
+                        return;
+                    }
+
+                    const updatedIds = [...currentIds, selectedId];
+                    renderSistemasTags('sistemas-tags-container', updatedIds);
+                    updateModuleAssignmentUI();
+                    if (select) select.value = '';
+                });
+            }
+
+            const sistemasTagsContainer = document.getElementById('sistemas-tags-container');
+            if (sistemasTagsContainer) {
+                sistemasTagsContainer.addEventListener('click', event => {
+                    const removeBtn = event.target.closest('button[data-action="remove-sistema"]');
+                    if (!removeBtn) return;
+                    const tag = removeBtn.closest('.sistema-tag');
+                    if (!tag) return;
+                    tag.remove();
+                    updateModuleAssignmentUI();
+                });
+            }
+
+
 
             ['import-team-btn', 'import-sistema-btn', 'import-client-btn'].forEach(id => {
                 const button = document.getElementById(id);
