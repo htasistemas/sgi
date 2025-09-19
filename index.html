@@ -88,6 +88,15 @@
             border-radius: 0.5rem;
             padding: 1rem;
         }
+
+        .tab-link-active {
+            color: #2DD4BF !important;
+            border-color: #2DD4BF !important;
+            background: linear-gradient(90deg, rgba(45, 212, 191, 0.12), rgba(59, 130, 246, 0.12));
+            box-shadow: 0 12px 24px rgba(45, 212, 191, 0.18);
+            border-radius: 0.5rem;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
     </style>
 </head>
 <body class="flex antialiased">
@@ -99,7 +108,10 @@
                 <div class="p-2 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg">
                     <i data-lucide="sitemap" class="text-white"></i>
                 </div>
-                <h1 class="text-2xl font-bold text-white">SGI.<span class="text-cyan-400">AI</span></h1>
+                <div>
+                    <h1 class="text-2xl font-bold text-white leading-tight">SGI.<span class="text-cyan-400">AI</span></h1>
+                    <p class="text-xs text-slate-300 tracking-wide">Versão 1.2</p>
+                </div>
             </div>
             <nav>
                 <ul class="space-y-1">
@@ -217,7 +229,7 @@
         <!-- ########## VIEW: CADASTROS ########## -->
         <div id="cadastros-view" data-view class="hidden">
             <header class="flex justify-between items-center mb-8"><h2 class="text-3xl font-bold text-white">Cadastros Gerais ⚙️</h2></header>
-            <div class="mb-6 border-b border-slate-700"><nav class="flex space-x-8" aria-label="Tabs"><a href="#" data-tab="equipes" class="tab-link text-cyan-400 border-cyan-400 py-4 px-1 border-b-2 font-medium text-lg">Equipes</a><a href="#" data-tab="sistemas" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-4 px-1 border-b-2 font-medium text-lg">Sistemas</a><a href="#" data-tab="clientes" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-4 px-1 border-b-2 font-medium text-lg">Clientes</a><a href="#" data-tab="status" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-4 px-1 border-b-2 font-medium text-lg">Status</a></nav></div>
+            <div class="mb-6 border-b border-slate-700"><nav class="flex space-x-4 md:space-x-8" aria-label="Tabs"><a href="#" data-tab="equipes" class="tab-link tab-link-active text-cyan-400 border-cyan-400 py-3 px-3 md:py-4 md:px-4 border-b-2 font-medium text-lg">Equipes</a><a href="#" data-tab="sistemas" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-3 px-3 md:py-4 md:px-4 border-b-2 font-medium text-lg">Sistemas</a><a href="#" data-tab="clientes" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-3 px-3 md:py-4 md:px-4 border-b-2 font-medium text-lg">Clientes</a><a href="#" data-tab="status" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-3 px-3 md:py-4 md:px-4 border-b-2 font-medium text-lg">Status</a></nav></div>
             <div id="equipes-tab" class="tab-content"><header class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold">Membros da Equipe</h3><div class="flex items-center gap-4"><button id="import-team-btn" data-import-type="team" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-team-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="user-plus"></i> Adicionar</button></div></header><section id="team-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></section></div>
             <div id="sistemas-tab" class="tab-content hidden"><div class="flex justify-end mb-4 gap-4"><button id="import-sistema-btn" data-import-type="sistema" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-sistema-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus"></i> Adicionar Sistema</button></div><section class="bg-[#1E2A47] p-6 rounded-xl"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Nome do Sistema</th><th class="p-3">Tipo</th><th class="p-3 text-right">Ações</th></tr></thead><tbody id="sistemas-table-body"></tbody></table></section></div>
             <div id="clientes-tab" class="tab-content hidden"><div class="flex justify-end mb-4 gap-4"><button id="import-client-btn" data-import-type="cliente" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-cliente-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus"></i> Adicionar Cliente</button></div><section class="bg-[#1E2A47] p-6 rounded-xl"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Nome do Cliente</th><th class="p-3">Cidade</th><th class="p-3">Responsável</th><th class="p-3 text-right">Ações</th></tr></thead><tbody id="clientes-table-body"></tbody></table></section></div>
@@ -1413,8 +1425,12 @@
                     const targetTabId = e.currentTarget.dataset.tab + '-tab';
                     document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
                     document.getElementById(targetTabId).classList.remove('hidden');
-                    document.querySelectorAll('.tab-link').forEach(t => { t.classList.remove('text-cyan-400', 'border-cyan-400'); t.classList.add('text-slate-400', 'border-transparent'); });
-                    e.currentTarget.classList.add('text-cyan-400', 'border-cyan-400');
+                    document.querySelectorAll('.tab-link').forEach(t => {
+                        t.classList.remove('text-cyan-400', 'border-cyan-400', 'tab-link-active');
+                        t.classList.add('text-slate-400', 'border-transparent');
+                    });
+                    e.currentTarget.classList.add('text-cyan-400', 'border-cyan-400', 'tab-link-active');
+                    e.currentTarget.classList.remove('text-slate-400', 'border-transparent');
                 });
             });
             
