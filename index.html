@@ -187,9 +187,9 @@
         <div id="cadastros-view" data-view class="hidden">
             <header class="flex justify-between items-center mb-8"><h2 class="text-3xl font-bold text-white">Cadastros Gerais ⚙️</h2></header>
             <div class="mb-6 border-b border-slate-700"><nav class="flex space-x-8" aria-label="Tabs"><a href="#" data-tab="equipes" class="tab-link text-cyan-400 border-cyan-400 py-4 px-1 border-b-2 font-medium text-lg">Equipes</a><a href="#" data-tab="sistemas" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-4 px-1 border-b-2 font-medium text-lg">Sistemas</a><a href="#" data-tab="clientes" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-4 px-1 border-b-2 font-medium text-lg">Clientes</a><a href="#" data-tab="status" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-4 px-1 border-b-2 font-medium text-lg">Status</a></nav></div>
-            <div id="equipes-tab" class="tab-content"><header class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold">Membros da Equipe</h3><div class="flex items-center gap-4"><button id="import-team-btn" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-team-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="user-plus"></i> Adicionar</button></div></header><section id="team-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></section></div>
-            <div id="sistemas-tab" class="tab-content hidden"><div class="flex justify-end mb-4"><button id="add-sistema-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus"></i> Adicionar Sistema</button></div><section class="bg-[#1E2A47] p-6 rounded-xl"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Nome do Sistema</th><th class="p-3">Tipo</th><th class="p-3 text-right">Ações</th></tr></thead><tbody id="sistemas-table-body"></tbody></table></section></div>
-            <div id="clientes-tab" class="tab-content hidden"><div class="flex justify-end mb-4 gap-4"><button id="import-client-btn" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-cliente-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus"></i> Adicionar Cliente</button></div><section class="bg-[#1E2A47] p-6 rounded-xl"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Nome do Cliente</th><th class="p-3">Cidade</th><th class="p-3">Responsável</th><th class="p-3 text-right">Ações</th></tr></thead><tbody id="clientes-table-body"></tbody></table></section></div>
+            <div id="equipes-tab" class="tab-content"><header class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold">Membros da Equipe</h3><div class="flex items-center gap-4"><button id="import-team-btn" data-import-type="team" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-team-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="user-plus"></i> Adicionar</button></div></header><section id="team-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></section></div>
+            <div id="sistemas-tab" class="tab-content hidden"><div class="flex justify-end mb-4 gap-4"><button id="import-sistema-btn" data-import-type="sistema" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-sistema-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus"></i> Adicionar Sistema</button></div><section class="bg-[#1E2A47] p-6 rounded-xl"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Nome do Sistema</th><th class="p-3">Tipo</th><th class="p-3 text-right">Ações</th></tr></thead><tbody id="sistemas-table-body"></tbody></table></section></div>
+            <div id="clientes-tab" class="tab-content hidden"><div class="flex justify-end mb-4 gap-4"><button id="import-client-btn" data-import-type="cliente" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-cliente-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus"></i> Adicionar Cliente</button></div><section class="bg-[#1E2A47] p-6 rounded-xl"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Nome do Cliente</th><th class="p-3">Cidade</th><th class="p-3">Responsável</th><th class="p-3 text-right">Ações</th></tr></thead><tbody id="clientes-table-body"></tbody></table></section></div>
             <div id="status-tab" class="tab-content hidden"><div class="flex justify-end mb-4"><button id="add-status-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus"></i> Adicionar Status</button></div><section class="bg-[#1E2A47] p-6 rounded-xl"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Nome do Status</th><th class="p-3">Cor</th><th class="p-3 text-right">Ações</th></tr></thead><tbody id="status-table-body"></tbody></table></section></div>
         </div>
         <input type="file" id="import-input" class="hidden" accept=".csv, .xls, .xlsx">
@@ -304,6 +304,9 @@
             let ideias = [];
             let knowledgeBase = [];
             let whatsappMessages = [];
+            let importContext = null;
+
+            const importInput = document.getElementById('import-input');
 
             // --- LÓGICA DE RENDERIZAÇÃO ---
             let chartInstances = {};
@@ -323,6 +326,132 @@
                     return parts[0].substring(0, 2).toUpperCase();
                 }
                 return '??';
+            }
+
+            function generateUniqueId(prefix) {
+                return `${prefix}${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+            }
+
+            function sanitizeText(value) {
+                if (value === undefined || value === null) return '';
+                return String(value).trim();
+            }
+
+            function normalizeNumericString(value) {
+                if (value === undefined || value === null || value === '') return '';
+                if (typeof value === 'number' && Number.isFinite(value)) {
+                    return Math.round(value).toString();
+                }
+                const text = sanitizeText(value);
+                if (!text) return '';
+                const numericValue = Number(text.replace(',', '.'));
+                if (!Number.isNaN(numericValue)) {
+                    return Math.round(numericValue).toString();
+                }
+                return text.replace(/\D/g, '');
+            }
+
+            function mapRowsToObjects(rows, config, builder) {
+                if (!Array.isArray(rows) || rows.length === 0) return [];
+                const headerRowRaw = Array.isArray(rows[0]) ? rows[0] : [];
+                const headerRow = headerRowRaw.map(cell => sanitizeText(cell).toLowerCase());
+                const hasHeader = config.some(item => item.keys.some(key => headerRow.includes(key)));
+                const dataRows = hasHeader ? rows.slice(1) : rows;
+
+                return dataRows.map(row => {
+                    if (!Array.isArray(row) || row.every(cell => sanitizeText(cell) === '')) return null;
+                    const values = {};
+                    config.forEach(item => {
+                        let value = '';
+                        if (hasHeader) {
+                            const index = headerRow.findIndex(headerCell => item.keys.includes(headerCell));
+                            if (index !== -1) value = row[index];
+                        } else if (typeof item.defaultIndex === 'number') {
+                            value = row[item.defaultIndex];
+                        }
+                        values[item.field] = value;
+                    });
+                    return builder(values, row, { hasHeader });
+                }).filter(Boolean);
+            }
+
+            function handleImportData(type, rows) {
+                if (!Array.isArray(rows) || rows.length === 0) return 0;
+                let imported = [];
+
+                if (type === 'team') {
+                    const config = [
+                        { field: 'nome', keys: ['nome', 'name'], defaultIndex: 0 },
+                        { field: 'cargo', keys: ['função', 'funcao', 'cargo', 'role'], defaultIndex: 1 },
+                        { field: 'email', keys: ['e-mail', 'email'], defaultIndex: 2 },
+                        { field: 'telefone', keys: ['telefone', 'phone', 'celular', 'whatsapp'], defaultIndex: 3 },
+                    ];
+                    imported = mapRowsToObjects(rows, config, values => {
+                        const nome = sanitizeText(values.nome);
+                        const cargo = sanitizeText(values.cargo);
+                        if (!nome || !cargo) return null;
+                        const email = sanitizeText(values.email);
+                        const telefone = normalizeNumericString(values.telefone);
+                        return {
+                            id: generateUniqueId('TM'),
+                            nome,
+                            cargo,
+                            email,
+                            telefone,
+                            avatar: generateAvatarInitials(nome),
+                            skills: ['Importado'],
+                        };
+                    });
+                    if (imported.length) {
+                        teamMembers = imported;
+                    }
+                }
+
+                if (type === 'sistema') {
+                    const config = [
+                        { field: 'sigla', keys: ['sigla', 'código', 'codigo'], defaultIndex: 0 },
+                        { field: 'nome', keys: ['sistema', 'nome', 'name'], defaultIndex: 1 },
+                        { field: 'tipo', keys: ['web/desk', 'tipo', 'plataforma'], defaultIndex: 2 },
+                    ];
+                    imported = mapRowsToObjects(rows, config, values => {
+                        const nome = sanitizeText(values.nome);
+                        if (!nome) return null;
+                        const sigla = sanitizeText(values.sigla);
+                        const tipo = sanitizeText(values.tipo) || 'Não informado';
+                        const idBase = sigla || nome;
+                        const id = idBase ? idBase.replace(/\s+/g, '').toUpperCase() : generateUniqueId('SIS');
+                        return { id, nome, tipo };
+                    });
+                    if (imported.length) {
+                        sistemas = imported;
+                    }
+                }
+
+                if (type === 'cliente') {
+                    const config = [
+                        { field: 'cnpj', keys: ['cnpj'], defaultIndex: 0 },
+                        { field: 'nome', keys: ['cliente', 'nome', 'razão social', 'razao social'], defaultIndex: 1 },
+                        { field: 'cidade', keys: ['cidade', 'município', 'municipio', 'city'], defaultIndex: 2 },
+                        { field: 'uf', keys: ['uf', 'estado', 'state'], defaultIndex: 3 },
+                        { field: 'responsavel', keys: ['responsável', 'responsavel', 'contato', 'responsável comercial', 'responsavel comercial'] },
+                    ];
+                    imported = mapRowsToObjects(rows, config, values => {
+                        const nome = sanitizeText(values.nome);
+                        if (!nome) return null;
+                        const cidadeBase = sanitizeText(values.cidade);
+                        const uf = sanitizeText(values.uf);
+                        const cidade = uf ? [cidadeBase, uf].filter(Boolean).join(' - ') : (cidadeBase || 'Não informado');
+                        const responsavel = sanitizeText(values.responsavel) || 'Não informado';
+                        const cnpj = normalizeNumericString(values.cnpj);
+                        const id = cnpj ? `CL${cnpj}` : generateUniqueId('CL');
+                        return { id, nome, cidade, responsavel, cnpj };
+                    });
+                    if (imported.length) {
+                        clientes = imported;
+                    }
+                }
+
+                return imported.length;
             }
 
             function renderAll() {
@@ -695,13 +824,20 @@
             const editForm = document.getElementById('edit-form');
             document.getElementById('close-edit-modal-btn').addEventListener('click', () => closeGenericModal(editModal));
             document.getElementById('cancel-edit-btn').addEventListener('click', () => closeGenericModal(editModal));
-            ['add-team-btn','add-sistema-btn','add-cliente-btn','add-status-btn', 'add-ideia-btn', 'add-kb-btn', 'add-mensagem-btn', 'import-client-btn', 'import-team-btn'].forEach(id => {
+            ['add-team-btn','add-sistema-btn','add-cliente-btn','add-status-btn', 'add-ideia-btn', 'add-kb-btn', 'add-mensagem-btn'].forEach(id => {
                 const button = document.getElementById(id);
-                if (button && (id === 'import-client-btn' || id === 'import-team-btn')) {
-                    button.addEventListener('click', () => document.getElementById('import-input').click());
-                } else if (button) {
+                if (button) {
                     button.addEventListener('click', () => openEditModalFor(id.split('-')[1], null, 'add'));
                 }
+            });
+
+            ['import-team-btn', 'import-sistema-btn', 'import-client-btn'].forEach(id => {
+                const button = document.getElementById(id);
+                if (!button) return;
+                button.addEventListener('click', () => {
+                    importContext = button.dataset.importType || id.replace('import-', '').replace('-btn', '');
+                    importInput.click();
+                });
             });
             
             function openEditModalFor(type, id = null, mode = 'edit') {
@@ -922,32 +1058,41 @@
                 };
                 reader.readAsText(file); e.target.value = '';
             });
-            document.getElementById('import-team-btn').addEventListener('click', () => document.getElementById('import-input').click());
-            document.getElementById('import-input').addEventListener('change', (event) => {
-                const file = event.target.files[0]; if (!file) return;
+            importInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+                if (!importContext) {
+                    event.target.value = '';
+                    alert('Selecione o tipo de importação antes de escolher um arquivo.');
+                    return;
+                }
+
                 const reader = new FileReader();
                 reader.onload = e => {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, {type: 'array'});
-                    const firstSheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[firstSheetName];
-                    const json = XLSX.utils.sheet_to_json(worksheet);
-                    
-                    const importedMembers = json.map(row => {
-                        const nome = row.Nome;
-                        const cargo = row.Função;
-                        const email = row['E-mail'];
-                        const telefone = row.Telefone;
-                        if (!nome || !cargo) return null;
-                        return { id: Date.now().toString() + Math.random(), nome: nome.trim(), cargo: cargo.trim(), email: email ? email.trim() : '', telefone: telefone ? String(telefone).replace(/\D/g, '') : '', avatar: generateAvatarInitials(nome.trim()), skills: ['Importado'] };
-                    }).filter(Boolean);
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const firstSheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[firstSheetName];
+                        const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' })
+                            .filter(row => Array.isArray(row) && row.some(cell => String(cell ?? '').trim() !== ''));
 
-                    teamMembers = importedMembers;
-                    renderAll();
-                    alert(`${importedMembers.length} membros importados!`);
+                        const importedCount = handleImportData(importContext, rows);
+                        if (importedCount > 0) {
+                            renderAll();
+                            alert(`${importedCount} registro${importedCount > 1 ? 's' : ''} importado${importedCount > 1 ? 's' : ''}!`);
+                        } else {
+                            alert('Nenhum registro válido encontrado no arquivo selecionado.');
+                        }
+                    } catch (error) {
+                        console.error('Erro ao importar arquivo:', error);
+                        alert('Não foi possível processar o arquivo informado.');
+                    } finally {
+                        importContext = null;
+                        importInput.value = '';
+                    }
                 };
                 reader.readAsArrayBuffer(file);
-                event.target.value = '';
             });
 
             // --- LÓGICA DA IA ---
