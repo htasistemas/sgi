@@ -88,6 +88,15 @@
             border-radius: 0.5rem;
             padding: 1rem;
         }
+
+        .tab-link-active {
+            color: #2DD4BF !important;
+            border-color: #2DD4BF !important;
+            background: linear-gradient(90deg, rgba(45, 212, 191, 0.12), rgba(59, 130, 246, 0.12));
+            box-shadow: 0 12px 24px rgba(45, 212, 191, 0.18);
+            border-radius: 0.5rem;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
     </style>
 </head>
 <body class="flex antialiased">
@@ -99,7 +108,13 @@
                 <div class="p-2 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg">
                     <i data-lucide="sitemap" class="text-white"></i>
                 </div>
-                <h1 class="text-2xl font-bold text-white">SGI.<span class="text-cyan-400">AI</span></h1>
+                <div>
+                    <h1 class="text-2xl font-bold text-white leading-tight">SGI.<span class="text-cyan-400">AI</span></h1>
+
+                    <p class="text-xs text-slate-300 tracking-wide">Versão 1.6</p>
+                    <p class="text-[10px] text-slate-400 tracking-wide">Sistema de Gestão de Implantação</p>
+
+                </div>
             </div>
             <nav>
                 <ul class="space-y-1">
@@ -150,7 +165,7 @@
             <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-2 bg-[#1E2A47] p-6 rounded-xl">
                     <h3 class="text-xl font-bold mb-4">Acompanhamento de Implantações</h3>
-                    <div class="overflow-x-auto"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Cliente / Projeto</th><th class="p-3">Status</th><th class="p-3">Progresso</th><th class="p-3">Ações</th></tr></thead><tbody id="projects-table-body"></tbody></table></div>
+                    <div class="overflow-x-auto"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Cliente / Projeto</th><th class="p-3">Status</th><th class="p-3">Progresso</th><th class="p-3">Detalhes</th><th class="p-3">Ações</th></tr></thead><tbody id="projects-table-body"></tbody></table></div>
                 </div>
                 <div class="bg-[#1E2A47] p-6 rounded-xl">
                     <h3 class="text-xl font-bold mb-2 flex items-center gap-2"><i data-lucide="settings-2" class="text-cyan-400"></i> Gestão Rápida</h3>
@@ -217,8 +232,10 @@
         <!-- ########## VIEW: CADASTROS ########## -->
         <div id="cadastros-view" data-view class="hidden">
             <header class="flex justify-between items-center mb-8"><h2 class="text-3xl font-bold text-white">Cadastros Gerais ⚙️</h2></header>
-            <div class="mb-6 border-b border-slate-700"><nav class="flex space-x-8" aria-label="Tabs"><a href="#" data-tab="equipes" class="tab-link text-cyan-400 border-cyan-400 py-4 px-1 border-b-2 font-medium text-lg">Equipes</a><a href="#" data-tab="sistemas" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-4 px-1 border-b-2 font-medium text-lg">Sistemas</a><a href="#" data-tab="clientes" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-4 px-1 border-b-2 font-medium text-lg">Clientes</a><a href="#" data-tab="status" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-4 px-1 border-b-2 font-medium text-lg">Status</a></nav></div>
-            <div id="equipes-tab" class="tab-content"><header class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold">Membros da Equipe</h3><div class="flex items-center gap-4"><button id="import-team-btn" data-import-type="team" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-team-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="user-plus"></i> Adicionar</button></div></header><section id="team-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></section></div>
+            <div class="mb-6 border-b border-slate-700"><nav class="flex space-x-4 md:space-x-8" aria-label="Tabs"><a href="#" data-tab="equipes" class="tab-link tab-link-active text-cyan-400 border-cyan-400 py-3 px-3 md:py-4 md:px-4 border-b-2 font-medium text-lg">Equipes</a><a href="#" data-tab="sistemas" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-3 px-3 md:py-4 md:px-4 border-b-2 font-medium text-lg">Sistemas</a><a href="#" data-tab="clientes" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-3 px-3 md:py-4 md:px-4 border-b-2 font-medium text-lg">Clientes</a><a href="#" data-tab="status" class="tab-link text-slate-400 border-transparent hover:text-slate-200 py-3 px-3 md:py-4 md:px-4 border-b-2 font-medium text-lg">Status</a></nav></div>
+
+            <div id="equipes-tab" class="tab-content"><header class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4"><div class="flex flex-col lg:flex-row lg:items-center gap-3 w-full lg:w-auto"><h3 class="text-xl font-bold">Membros da Equipe</h3><div class="relative w-full lg:w-72"><input type="search" id="team-search-input" placeholder="Buscar por nome..." class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2.5 px-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-400" aria-label="Buscar membros da equipe"></div></div><div class="flex items-center gap-4 self-end lg:self-auto"><button id="import-team-btn" data-import-type="team" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-team-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="user-plus"></i> Adicionar</button></div></header><section id="team-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></section></div>
+
             <div id="sistemas-tab" class="tab-content hidden"><div class="flex justify-end mb-4 gap-4"><button id="import-sistema-btn" data-import-type="sistema" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-sistema-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus"></i> Adicionar Sistema</button></div><section class="bg-[#1E2A47] p-6 rounded-xl"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Nome do Sistema</th><th class="p-3">Tipo</th><th class="p-3 text-right">Ações</th></tr></thead><tbody id="sistemas-table-body"></tbody></table></section></div>
             <div id="clientes-tab" class="tab-content hidden"><div class="flex justify-end mb-4 gap-4"><button id="import-client-btn" data-import-type="cliente" class="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="upload"></i> Importar</button><button id="add-cliente-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus"></i> Adicionar Cliente</button></div><section class="bg-[#1E2A47] p-6 rounded-xl"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Nome do Cliente</th><th class="p-3">Cidade</th><th class="p-3">Responsável</th><th class="p-3 text-right">Ações</th></tr></thead><tbody id="clientes-table-body"></tbody></table></section></div>
             <div id="status-tab" class="tab-content hidden"><div class="flex justify-end mb-4"><button id="add-status-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus"></i> Adicionar Status</button></div><section class="bg-[#1E2A47] p-6 rounded-xl"><table class="w-full text-left"><thead><tr class="border-b border-slate-700"><th class="p-3">Nome do Status</th><th class="p-3">Cor</th><th class="p-3 text-right">Ações</th></tr></thead><tbody id="status-table-body"></tbody></table></section></div>
@@ -326,15 +343,25 @@
             let teamMembers = [];
             let sistemas = [];
             let clientes = [];
-            let statuses = [
+            const STORAGE_KEY = 'sgi-ai-data';
+            const DEFAULT_STATUSES = [
                 { id: "ST1", text: "Planejamento", color: "#64748B" }, { id: "ST2", text: "Execução", color: "#3B82F6" },
                 { id: "ST3", text: "Homologação", color: "#A855F7" }, { id: "ST4", text: "Risco", color: "#EF4444" },
                 { id: "ST5", text: "Concluído", color: "#22C55E" },
             ];
+            let statuses = [...DEFAULT_STATUSES];
             let projects = [];
             let ideias = [];
             let knowledgeBase = [];
             let whatsappMessages = [];
+            const normalizeText = (text) => typeof text === 'string' ? text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() : '';
+            const escapeHTML = (text) => typeof text === 'string' ? text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;') : '';
+            let teamSearchTerm = '';
             const defaultMessageSuggestions = [
                 {
                     id: 'suggestion-welcome',
@@ -360,6 +387,101 @@
             let importContext = null;
 
             const importInput = document.getElementById('import-input');
+            const teamSearchInput = document.getElementById('team-search-input');
+            if (teamSearchInput) {
+                teamSearchInput.addEventListener('input', event => {
+                    teamSearchTerm = event.target.value || '';
+                    renderTeam();
+                });
+            }
+
+            const storageAvailable = (() => {
+                try {
+                    if (typeof localStorage === 'undefined') return false;
+                    const testKey = '__sgi_ai_storage_test__';
+                    localStorage.setItem(testKey, '1');
+                    localStorage.removeItem(testKey);
+                    return true;
+                } catch (error) {
+                    console.warn('Persistência local indisponível:', error);
+                    return false;
+                }
+            })();
+
+            function saveData() {
+                if (!storageAvailable) return;
+                try {
+                    const payload = { projects, teamMembers, sistemas, clientes, statuses, ideias, knowledgeBase, whatsappMessages };
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+                } catch (error) {
+                    console.warn('Não foi possível salvar os dados localmente.', error);
+                }
+            }
+
+            function loadPersistedData() {
+                if (!storageAvailable) return;
+                try {
+                    const stored = localStorage.getItem(STORAGE_KEY);
+                    if (!stored) return;
+                    const data = JSON.parse(stored);
+                    if (Array.isArray(data.teamMembers)) teamMembers = data.teamMembers;
+                    if (Array.isArray(data.sistemas)) sistemas = data.sistemas;
+                    if (Array.isArray(data.clientes)) clientes = data.clientes;
+                    if (Array.isArray(data.statuses)) statuses = data.statuses.length ? data.statuses : [...DEFAULT_STATUSES];
+                    if (Array.isArray(data.projects)) projects = data.projects;
+                    if (Array.isArray(data.ideias)) ideias = data.ideias;
+                    if (Array.isArray(data.knowledgeBase)) knowledgeBase = data.knowledgeBase;
+                    if (Array.isArray(data.whatsappMessages)) whatsappMessages = data.whatsappMessages;
+                } catch (error) {
+                    console.warn('Não foi possível carregar os dados salvos.', error);
+                }
+            }
+
+
+
+            const storageAvailable = (() => {
+                try {
+                    if (typeof localStorage === 'undefined') return false;
+                    const testKey = '__sgi_ai_storage_test__';
+                    localStorage.setItem(testKey, '1');
+                    localStorage.removeItem(testKey);
+                    return true;
+                } catch (error) {
+                    console.warn('Persistência local indisponível:', error);
+                    return false;
+                }
+            })();
+
+            function saveData() {
+                if (!storageAvailable) return;
+                try {
+                    const payload = { projects, teamMembers, sistemas, clientes, statuses, ideias, knowledgeBase, whatsappMessages };
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+                } catch (error) {
+                    console.warn('Não foi possível salvar os dados localmente.', error);
+                }
+            }
+
+            function loadPersistedData() {
+                if (!storageAvailable) return;
+                try {
+                    const stored = localStorage.getItem(STORAGE_KEY);
+                    if (!stored) return;
+                    const data = JSON.parse(stored);
+                    if (Array.isArray(data.teamMembers)) teamMembers = data.teamMembers;
+                    if (Array.isArray(data.sistemas)) sistemas = data.sistemas;
+                    if (Array.isArray(data.clientes)) clientes = data.clientes;
+                    if (Array.isArray(data.statuses)) statuses = data.statuses.length ? data.statuses : [...DEFAULT_STATUSES];
+                    if (Array.isArray(data.projects)) projects = data.projects;
+                    if (Array.isArray(data.ideias)) ideias = data.ideias;
+                    if (Array.isArray(data.knowledgeBase)) knowledgeBase = data.knowledgeBase;
+                    if (Array.isArray(data.whatsappMessages)) whatsappMessages = data.whatsappMessages;
+                } catch (error) {
+                    console.warn('Não foi possível carregar os dados salvos.', error);
+                }
+            }
+
+
 
             // --- LÓGICA DE RENDERIZAÇÃO ---
             let chartInstances = {};
@@ -397,12 +519,22 @@
                 }).filter(Boolean);
             }
 
-            function isModuleAllowedForMember(member, sistema) {
+            function isModuleWithinSkills(member, sistema) {
                 if (!sistema) return false;
                 const skills = Array.isArray(member?.skills) ? member.skills.filter(Boolean) : [];
                 if (skills.length === 0) return true;
                 const sistemaName = normalizeComparisonText(sistema.nome);
                 return skills.some(skill => sistemaName.includes(normalizeComparisonText(skill)));
+            }
+
+            function formatModuleBadge(sistemaId, member = null) {
+                const sistema = sistemas.find(s => s.id === sistemaId);
+                if (!sistema) return '';
+                const compatible = member ? isModuleWithinSkills(member, sistema) : true;
+                const baseClasses = 'text-xs px-2 py-1 rounded-full whitespace-nowrap';
+                const styleClasses = compatible ? 'bg-slate-600 text-slate-200' : 'bg-amber-500/20 text-amber-200 border border-amber-400/30';
+                const label = compatible ? sistema.nome : `${sistema.nome} (*)`;
+                return `<span class="${baseClasses} ${styleClasses}">${label}</span>`;
             }
 
             function getStatusPill(statusId) {
@@ -680,6 +812,7 @@
                     return;
                 }
                 whatsappMessages.push({ id: generateUniqueId('MSG'), title: suggestion.title, text: suggestion.text });
+                saveData();
                 renderWhatsappMessages();
                 renderMessageSuggestions();
                 lucide.createIcons();
@@ -689,13 +822,14 @@
             function renderAll() {
                 ensureProjectsHaveAssignmentsStructure();
                 renderProjects(); renderTeam(); renderSistemas(); renderClientes(); renderStatuses();
-                renderReports(); updateKPIs(); analyzeDataForAI(); renderIdeias();
+                renderReports(); updateKPIs(); analyzeDataForAI(); renderIdeias(); renderKB();
                 renderWhatsappMessages();
 
                 renderMessageSuggestions();
 
                 setupDashboardShortcuts();
                 lucide.createIcons();
+                saveData();
             }
 
             function renderProjects() {
@@ -705,30 +839,61 @@
                 tableBody.innerHTML = ''; projectCardsContainer.innerHTML = ''; 
                 projects.forEach(p => {
                     const cliente = clientes.find(c => c.id === p.clienteId);
+                    const assignments = normalizeProjectAssignments(p);
                     const projectSistemas = (p.sistemasIds || []).map(sId => sistemas.find(s => s.id === sId)?.nome).filter(Boolean).join(', ');
+                    const moduleSummaryBadges = ((p.sistemasIds || []).map(sId => formatModuleBadge(sId)).filter(Boolean).join(' ')) || '<span class="text-xs text-slate-500">Nenhum módulo cadastrado.</span>';
+                    const gerenteComercial = teamMembers.find(tm => tm.id === p.gerCom)?.nome || 'Não atribuído';
+                    const gerenteTecnico = teamMembers.find(tm => tm.id === p.gerTec)?.nome || 'Não atribuído';
+                    const equipeResumo = assignments.length
+                        ? assignments.map(assignment => {
+                            const member = teamMembers.find(m => m.id === assignment.memberId);
+                            if (!member) return '';
+                            const badges = (assignment.sistemasIds || []).map(sId => formatModuleBadge(sId, member)).filter(Boolean).join(' ');
+                            const badgeContent = badges || '<span class="text-xs text-slate-500">Sem módulos atribuídos.</span>';
+                            return `<div class="text-sm text-slate-200">
+                                        <div class="font-semibold text-slate-100">${member.nome}</div>
+                                        <div class="flex flex-wrap gap-2 mt-1">${badgeContent}</div>
+                                    </div>`;
+                        }).join('')
+                        : '<p class="text-xs text-slate-500">Nenhum membro atribuído.</p>';
 
-                    const tableRowHTML = `<tr class="hover:bg-slate-700/50">
-                            <td class="p-3"><div class="font-bold">${cliente?.nome || 'N/A'}</div><div class="text-sm text-slate-400">${projectSistemas.substring(0, 30)}...</div></td>
-                            <td class="p-3">${getStatusPill(p.statusId)}</td>
-                            <td class="p-3">
+                    const detalhesHTML = `<div class="space-y-3">
+                            <div>
+                                <p class="text-xs uppercase tracking-wide text-slate-400">Módulos do projeto</p>
+                                <div class="flex flex-wrap gap-2 mt-1">${moduleSummaryBadges}</div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div class="text-xs text-slate-400 uppercase tracking-wide">Ger. Comercial<div class="text-sm text-slate-200 normal-case tracking-normal">${gerenteComercial}</div></div>
+                                <div class="text-xs text-slate-400 uppercase tracking-wide">Ger. Técnica<div class="text-sm text-slate-200 normal-case tracking-normal">${gerenteTecnico}</div></div>
+                            </div>
+                            <div>
+                                <p class="text-xs uppercase tracking-wide text-slate-400">Equipe responsável</p>
+                                <div class="mt-2 space-y-2">${equipeResumo}</div>
+                            </div>
+                        </div>`;
+
+                    const tableRowHTML = `<tr class="hover:bg-slate-700/50 align-top">
+                            <td class="p-3 align-top">
+                                <div class="font-bold">${cliente?.nome || 'N/A'}</div>
+                                <div class="text-sm text-slate-400">${p.cidade || 'Cidade não informada'}</div>
+                            </td>
+                            <td class="p-3 align-top">${getStatusPill(p.statusId)}</td>
+                            <td class="p-3 align-top">
                                 <div class="w-full bg-slate-600 rounded-full h-2.5"><div class="bg-gradient-to-r from-cyan-400 to-blue-500 h-2.5 rounded-full" style="width: ${p.progresso}%"></div></div>
                                 <div class="text-right text-sm mt-1">${p.progresso}%</div>
                             </td>
-                            <td class="p-3">
+                            <td class="p-3 align-top">${detalhesHTML}</td>
+                            <td class="p-3 align-top">
                                <button class="edit-btn" data-type="project" data-id="${p.id}"><i data-lucide="edit" class="text-cyan-400"></i></button>
                                <button class="delete-btn ml-2" data-type="project" data-id="${p.id}"><i data-lucide="trash-2" class="text-red-400"></i></button>
                             </td>
                         </tr>`;
                     tableBody.innerHTML += tableRowHTML;
-                    
-                    const assignments = normalizeProjectAssignments(p);
+
                     const responsaveisHTML = assignments.map(assignment => {
                         const member = teamMembers.find(m => m.id === assignment.memberId);
                         if (!member) return '';
-                        const assignedSistemas = (assignment.sistemasIds || []).map(sId => {
-                            const sistema = sistemas.find(s => s.id === sId);
-                            return `<span class="text-xs bg-slate-600 px-2 py-1 rounded-full whitespace-nowrap">${sistema?.nome || 'N/A'}</span>`;
-                        }).join(' ');
+                        const assignedSistemas = (assignment.sistemasIds || []).map(sId => formatModuleBadge(sId, member)).filter(Boolean).join(' ');
 
                         return `<div class="space-y-1 text-sm">
                                     <div class="font-semibold text-slate-100">${member.nome}</div>
@@ -752,7 +917,19 @@
                 const container = document.getElementById('team-cards-container');
                 if(!container) return;
                 container.innerHTML = '';
-                teamMembers.forEach(m => {
+                const normalizedTerm = normalizeText(teamSearchTerm.trim());
+                const filteredMembers = normalizedTerm ? teamMembers.filter(m => normalizeText(m.nome).includes(normalizedTerm)) : [...teamMembers];
+
+                if (filteredMembers.length === 0) {
+                    const sanitizedTerm = escapeHTML(teamSearchTerm.trim());
+                    const message = normalizedTerm
+                        ? `Nenhum membro encontrado para <span class="text-slate-200 font-semibold">&ldquo;${sanitizedTerm}&rdquo;</span>.`
+                        : 'Nenhum membro cadastrado até o momento.';
+                    container.innerHTML = `<div class="col-span-full bg-[#1E2A47] p-6 rounded-xl text-center text-slate-400">${message}</div>`;
+                    return;
+                }
+
+                filteredMembers.forEach(m => {
                     container.innerHTML += `<div class="bg-[#1E2A47] p-5 rounded-xl card-hover-effect text-center flex flex-col justify-between">
                         <div>
                             <div class="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 mx-auto flex items-center justify-center text-3xl font-bold mb-4">${m.avatar}</div>
@@ -769,6 +946,7 @@
                         </div>
                     </div>`;
                 });
+                lucide.createIcons();
             }
 
             function renderGenericTable(tbodyId, data, columns, type) {
@@ -1036,14 +1214,21 @@
                 }
             }
 
-            function createModuleChipElement(sistemaId) {
+            function createModuleChipElement(sistemaId, member = null) {
                 const sistema = sistemas.find(s => s.id === sistemaId);
                 if (!sistema) return null;
+                const compatible = member ? isModuleWithinSkills(member, sistema) : true;
                 const chip = document.createElement('span');
                 chip.dataset.role = 'assigned-chip';
                 chip.dataset.sistemaId = sistemaId;
-                chip.className = 'sistema-chip flex items-center gap-2 bg-cyan-500/20 text-cyan-200 px-3 py-1 rounded-full text-sm';
-                chip.innerHTML = `<span>${sistema.nome}</span><button type="button" data-action="remove-member-module" class="leading-none"><i data-lucide="x" class="w-4 h-4"></i></button>`;
+                chip.dataset.compatible = compatible ? 'true' : 'false';
+                const baseClasses = 'sistema-chip flex items-center gap-2 px-3 py-1 rounded-full text-sm';
+                chip.className = compatible ? `${baseClasses} bg-cyan-500/20 text-cyan-200` : `${baseClasses} bg-amber-500/20 text-amber-200 border border-amber-400/30`;
+                const label = compatible ? sistema.nome : `${sistema.nome} (*)`;
+                chip.innerHTML = `<span>${label}</span><button type="button" data-action="remove-member-module" class="leading-none"><i data-lucide="x" class="w-4 h-4"></i></button>`;
+                if (!compatible) {
+                    chip.title = 'Módulo fora das habilidades cadastradas para este membro.';
+                }
                 return chip;
             }
 
@@ -1057,19 +1242,18 @@
                 const memberId = wrapper.dataset.memberId;
                 const member = teamMembers.find(m => m.id === memberId);
                 const projectSystemIds = getSelectedProjectSystemIds();
-                const allowedIds = projectSystemIds.filter(id => {
-                    const sistema = sistemas.find(s => s.id === id);
-                    return sistema && isModuleAllowedForMember(member, sistema);
-                });
-                const availableIds = allowedIds.filter(id => !assignedIds.includes(id));
+                const availableIds = projectSystemIds.filter(id => !assignedIds.includes(id) && sistemas.some(s => s.id === id));
+                let incompatibleCount = 0;
 
                 picker.innerHTML = '<option value="">Adicionar módulo...</option>';
                 availableIds.forEach(id => {
                     const sistema = sistemas.find(s => s.id === id);
                     if (!sistema) return;
+                    const compatible = isModuleWithinSkills(member, sistema);
+                    if (!compatible) incompatibleCount++;
                     const option = document.createElement('option');
                     option.value = id;
-                    option.textContent = sistema.nome;
+                    option.textContent = compatible ? sistema.nome : `${sistema.nome} (*)`;
                     picker.appendChild(option);
                 });
 
@@ -1078,7 +1262,10 @@
                 picker.classList.toggle('opacity-50', availableIds.length === 0);
                 if (hint) {
                     if (availableIds.length === 0) {
-                        hint.textContent = allowedIds.length === 0 ? 'Nenhum módulo compatível com as habilidades cadastradas.' : 'Todos os módulos compatíveis já foram atribuídos para este membro.';
+                        hint.textContent = 'Todos os módulos selecionados já foram atribuídos para este membro.';
+                        hint.classList.remove('hidden');
+                    } else if (incompatibleCount > 0) {
+                        hint.textContent = 'Opções marcadas com (*) não fazem parte das habilidades cadastradas.';
                         hint.classList.remove('hidden');
                     } else {
                         hint.classList.add('hidden');
@@ -1130,11 +1317,7 @@
                         selectedSystemsForMember = existingAssignments[member.id].filter(id => selectedSistemasIds.includes(id));
                     }
 
-
-                    selectedSystemsForMember = Array.from(new Set(selectedSystemsForMember)).filter(id => {
-                        const sistema = sistemas.find(s => s.id === id);
-                        return sistema && isModuleAllowedForMember(member, sistema);
-                    });
+                    selectedSystemsForMember = Array.from(new Set(selectedSystemsForMember)).filter(id => sistemas.some(s => s.id === id));
 
                     const wrapper = document.createElement('div');
                     wrapper.className = 'space-y-3 border border-slate-700 rounded-lg p-4';
@@ -1156,7 +1339,7 @@
                     assignedList.className = 'flex flex-wrap gap-2';
                     assignedList.dataset.role = 'assigned-list';
                     selectedSystemsForMember.forEach(id => {
-                        const chip = createModuleChipElement(id);
+                        const chip = createModuleChipElement(id, member);
                         if (chip) assignedList.appendChild(chip);
                     });
                     wrapper.appendChild(assignedList);
@@ -1192,7 +1375,9 @@
                             select.value = '';
                             return;
                         }
-                        const chip = createModuleChipElement(value);
+                        const memberId = wrapper.dataset.memberId;
+                        const member = teamMembers.find(m => m.id === memberId);
+                        const chip = createModuleChipElement(value, member);
                         if (!chip) return;
                         const emptyState = list.querySelector('[data-role="empty-state"]');
                         if (emptyState) emptyState.remove();
@@ -1339,7 +1524,7 @@
                 if (type === 'status') formContent.innerHTML = `<div><label>Nome do Status</label><input name="text" value="${item.text || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Cor</label><input name="color" type="color" value="${item.color || '#64748B'}" class="w-full h-10 p-1 bg-slate-700 rounded-lg"></div>`;
                 if (type === 'ideia') formContent.innerHTML = `<div><label>Título da Ideia</label><input name="titulo" value="${item.titulo || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Categoria</label><input name="categoria" value="${item.categoria || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg"></div><div><label>Descrição</label><textarea name="descricao" rows="4" class="w-full bg-slate-700 p-2.5 rounded-lg">${item.descricao || ''}</textarea></div><div><label>Status</label><select name="status" class="w-full bg-slate-700 p-2.5 rounded-lg"><option>Nova</option><option>Em Análise</option><option>Aprovada</option><option>Rejeitada</option></select></div>`;
                 if (type === 'kb') formContent.innerHTML = `<div><label>Título do Artigo</label><input name="titulo" value="${item.titulo || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Categoria</label><input name="categoria" value="${item.categoria || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg"></div><div><label>Conteúdo</label><textarea name="conteudo" rows="6" class="w-full bg-slate-700 p-2.5 rounded-lg">${item.conteudo || ''}</textarea></div>`;
-                if (type === 'mensagem') formContent.innerHTML = `<div><label>Título da Mensagem</label><input name="title" value="${item.title || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Texto da Mensagem</label><textarea name="text" rows="4" class="w-full bg-slate-700 p-2.5 rounded-lg" placeholder="Use [NOME] para o nome do destinatário e [EQUIPE] para o nome da equipe.">${item.text || ''}</textarea></div>`;
+                if (type === 'mensagem') formContent.innerHTML = `<div><label>Título da Mensagem</label><input name="title" value="${item.title || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Texto da Mensagem</label><textarea name="text" rows="4" class="w-full bg-slate-700 p-2.5 rounded-lg" placeholder="Use [NOME] para o nome do destinatário e [EQUIPE] para o nome da equipe." required>${item.text || ''}</textarea></div>`;
 
                 openGenericModal(editModal);
             }
@@ -1367,7 +1552,17 @@
                 if (type === 'status') updateOrAdd(statuses, data);
                 if (type === 'ideia') updateOrAdd(ideias, data);
                 if (type === 'kb') updateOrAdd(knowledgeBase, data);
-                if (type === 'mensagem') updateOrAdd(whatsappMessages, data);
+                if (type === 'mensagem') {
+                    data.text = (data.text || '').trim();
+                    if (!data.text) {
+                        alert('Informe o texto da mensagem.');
+                        return;
+                    }
+                    if (!/\[NOME\]/i.test(data.text)) {
+                        data.text = `Olá [NOME], ${data.text}`;
+                    }
+                    updateOrAdd(whatsappMessages, data);
+                }
 
                 renderAll();
                 closeGenericModal(editModal);
@@ -1502,8 +1697,12 @@
                     const targetTabId = e.currentTarget.dataset.tab + '-tab';
                     document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
                     document.getElementById(targetTabId).classList.remove('hidden');
-                    document.querySelectorAll('.tab-link').forEach(t => { t.classList.remove('text-cyan-400', 'border-cyan-400'); t.classList.add('text-slate-400', 'border-transparent'); });
-                    e.currentTarget.classList.add('text-cyan-400', 'border-cyan-400');
+                    document.querySelectorAll('.tab-link').forEach(t => {
+                        t.classList.remove('text-cyan-400', 'border-cyan-400', 'tab-link-active');
+                        t.classList.add('text-slate-400', 'border-transparent');
+                    });
+                    e.currentTarget.classList.add('text-cyan-400', 'border-cyan-400', 'tab-link-active');
+                    e.currentTarget.classList.remove('text-slate-400', 'border-transparent');
                 });
             });
             
@@ -1537,9 +1736,23 @@
                         btn.onclick = () => {
                             const firstName = (member.nome || '').split(' ')[0] || member.nome;
                             const teamName = member.teamName || 'sua equipe';
-                            const messageText = msg.text
-                                .replace(/\[NOME\]/g, firstName)
-                                .replace(/\[EQUIPE\]/g, teamName);
+                            let messageText = (msg.text || '').trim();
+                            const hasNamePlaceholder = /\[NOME\]/i.test(messageText);
+                            const hasTeamPlaceholder = /\[EQUIPE\]/i.test(messageText);
+
+                            if (!hasNamePlaceholder) {
+                                const greeting = `Olá ${firstName}`;
+                                messageText = messageText ? `${greeting}, ${messageText}` : `${greeting}!`;
+                            }
+
+                            messageText = messageText
+                                .replace(/\[NOME\]/gi, firstName)
+                                .replace(/\[EQUIPE\]/gi, teamName);
+
+                            if (!hasTeamPlaceholder && teamName && teamName !== 'sua equipe') {
+                                messageText = `${messageText} (Equipe: ${teamName})`;
+                            }
+
                             const url = `https://wa.me/${member.telefone}?text=${encodeURIComponent(messageText)}`;
                             window.open(url, '_blank');
                             closeGenericModal(whatsappModal);
@@ -1566,8 +1779,14 @@
                     try {
                         const data = JSON.parse(re.target.result);
                         if (data.projects && data.teamMembers && data.sistemas && data.clientes && data.statuses) {
-                            projects = data.projects; teamMembers = data.teamMembers; sistemas = data.sistemas; clientes = data.clientes; statuses = data.statuses;
-                            ideias = data.ideias || []; knowledgeBase = data.knowledgeBase || []; whatsappMessages = data.whatsappMessages || [];
+                            projects = data.projects;
+                            teamMembers = data.teamMembers;
+                            sistemas = data.sistemas;
+                            clientes = data.clientes;
+                            statuses = Array.isArray(data.statuses) && data.statuses.length ? data.statuses : [...DEFAULT_STATUSES];
+                            ideias = data.ideias || [];
+                            knowledgeBase = data.knowledgeBase || [];
+                            whatsappMessages = data.whatsappMessages || [];
                             renderAll(); alert('Backup restaurado!');
                         } else { alert('Arquivo de backup inválido.'); }
                     } catch (err) { alert('Erro ao ler o arquivo.'); }
@@ -1638,6 +1857,7 @@
 
 
             // --- INICIALIZAÇÃO ---
+
             async function initializeApp() {
                 try {
                     await loadInitialBackupData();
@@ -1649,6 +1869,7 @@
                     setInterval(analyzeDataForAI, 10000);
                 }
             }
+
 
             setupDashboardShortcuts();
             document.querySelector('[data-target="dashboard-view"]')?.click();
