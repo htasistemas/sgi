@@ -439,50 +439,6 @@
 
 
 
-            const storageAvailable = (() => {
-                try {
-                    if (typeof localStorage === 'undefined') return false;
-                    const testKey = '__sgi_ai_storage_test__';
-                    localStorage.setItem(testKey, '1');
-                    localStorage.removeItem(testKey);
-                    return true;
-                } catch (error) {
-                    console.warn('Persistência local indisponível:', error);
-                    return false;
-                }
-            })();
-
-            function saveData() {
-                if (!storageAvailable) return;
-                try {
-                    const payload = { projects, teamMembers, sistemas, clientes, statuses, ideias, knowledgeBase, whatsappMessages };
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-                } catch (error) {
-                    console.warn('Não foi possível salvar os dados localmente.', error);
-                }
-            }
-
-            function loadPersistedData() {
-                if (!storageAvailable) return;
-                try {
-                    const stored = localStorage.getItem(STORAGE_KEY);
-                    if (!stored) return;
-                    const data = JSON.parse(stored);
-                    if (Array.isArray(data.teamMembers)) teamMembers = data.teamMembers;
-                    if (Array.isArray(data.sistemas)) sistemas = data.sistemas;
-                    if (Array.isArray(data.clientes)) clientes = data.clientes;
-                    if (Array.isArray(data.statuses)) statuses = data.statuses.length ? data.statuses : [...DEFAULT_STATUSES];
-                    if (Array.isArray(data.projects)) projects = data.projects;
-                    if (Array.isArray(data.ideias)) ideias = data.ideias;
-                    if (Array.isArray(data.knowledgeBase)) knowledgeBase = data.knowledgeBase;
-                    if (Array.isArray(data.whatsappMessages)) whatsappMessages = data.whatsappMessages;
-                } catch (error) {
-                    console.warn('Não foi possível carregar os dados salvos.', error);
-                }
-            }
-
-
-
             // --- LÓGICA DE RENDERIZAÇÃO ---
             let chartInstances = {};
 
