@@ -291,6 +291,7 @@
                             <div><label class="block mb-2 text-sm">Status</label><select id="status-select" class="w-full bg-slate-700 p-2.5 rounded-lg" required></select></div>
                             <div><label class="block mb-2 text-sm">Progresso (%)</label><input type="number" id="progresso" class="w-full bg-slate-700 p-2.5 rounded-lg" required min="0" max="100"></div>
                             <div><label class="block mb-2 text-sm">Número do Contrato</label><input type="text" id="contrato-numero" class="w-full bg-slate-700 p-2.5 rounded-lg" placeholder="Ex.: 123/2024"></div>
+
                             <div><label class="block mb-2 text-sm">Descrição da Vigência</label><input type="text" id="contrato-vigencia" class="w-full bg-slate-700 p-2.5 rounded-lg" placeholder="Ex.: 12 meses"></div>
                             <div><label class="block mb-2 text-sm">Valor do Contrato</label><input type="text" id="contrato-valor" inputmode="decimal" class="w-full bg-slate-700 p-2.5 rounded-lg" placeholder="Ex.: 150000,00"></div>
                             <div><label class="block mb-2 text-sm">Fim da Vigência (data)</label><input type="date" id="contrato-validade" class="w-full bg-slate-700 p-2.5 rounded-lg"></div>
@@ -300,6 +301,7 @@
                             <p class="text-xs text-slate-400 mb-3">Registre valores, termos e validade de cada aditivo. Use o botão abaixo para adicionar quantos forem necessários.</p>
                             <div id="aditivos-container" class="space-y-3 bg-slate-900/40 border border-slate-700 rounded-lg p-4 min-h-[72px]"></div>
                             <button type="button" id="add-aditivo-btn" class="mt-3 inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-700 text-slate-200 hover:bg-slate-600 transition-colors text-sm"><i data-lucide="plus"></i> Adicionar aditivo</button>
+
                         </div>
                         <div>
                             <label class="block mb-2 text-sm">Sistemas a Implantar</label>
@@ -603,6 +605,7 @@
                     }
                 } catch (error) {
                     console.warn('Falha ao normalizar texto com TextDecoder:', error);
+
                 }
                 try {
                     if (typeof escape === 'function' && typeof decodeURIComponent === 'function') {
@@ -612,6 +615,7 @@
                 } catch (error) {
                     console.warn('Falha ao normalizar texto via escape/decodeURIComponent:', error);
                 }
+
                 return cleaned;
             }
 
@@ -985,6 +989,7 @@
                 const tableBody = document.getElementById('projects-table-body');
                 const projectCardsContainer = document.getElementById('project-cards-container');
                 if (!tableBody || !projectCardsContainer) return;
+
                 tableBody.innerHTML = ''; projectCardsContainer.innerHTML = '';
                 projects.forEach(project => {
                     const normalized = normalizeProjectData(project);
@@ -1030,6 +1035,7 @@
                         ? equipeEntries.map(entry => `<div><div class="font-semibold text-slate-100 text-sm">${entry.nome}</div><div class="flex flex-wrap gap-1 mt-1">${entry.badges}</div></div>`).join('')
                         : '<p class="text-xs text-slate-500">Nenhum responsável atribuído.</p>';
 
+
                     const aditivosListHTML = aditivos.length
                         ? aditivos.map(aditivo => {
                             const descricao = aditivo.descricao ? escapeHTML(aditivo.descricao) : 'Aditivo sem descrição';
@@ -1071,6 +1077,7 @@
                         const statusLabel = status ? status.label : 'Sem validade';
                         return `<div class="bg-slate-900/40 border border-slate-700/60 rounded-md p-2"><div class="flex items-center justify-between gap-2"><span class="text-sm font-semibold text-slate-100">${descricao}</span><span class="text-xs ${statusClass}">${statusLabel}</span></div><div class="text-xs text-slate-400 mt-1">${valor}</div></div>`;
                     }).join('');
+
 
                     const aditivosPreview = aditivos.length
                         ? `${aditivosPreviewItems}${aditivos.length > 2 ? `<p class="text-xs text-slate-400">+ ${aditivos.length - 2} aditivo(s) adicional(is)</p>` : ''}`
@@ -1161,6 +1168,7 @@
                         return `<div class="bg-slate-900/40 border border-slate-700/60 rounded-md p-3 space-y-2">${header}${details.join('')}</div>`;
                     }).join('');
                     container.innerHTML += `<div class="border border-slate-700 rounded-lg p-4 space-y-3"><div class="flex items-center gap-2"><i data-lucide="${section.icon}" class="w-4 h-4 ${section.textClass}"></i><h4 class="text-sm font-semibold text-slate-100">${section.title}</h4></div>${itemsHtml}</div>`;
+
                 });
 
                 lucide.createIcons();
@@ -1346,6 +1354,7 @@
                 });
 
                 const projectData = {
+
                     clienteId: document.getElementById('cliente-select').value,
                     cidade: document.getElementById('cidade').value,
                     gerTec: document.getElementById('ger-tecnica').value,
@@ -1362,6 +1371,7 @@
                     aditivos: collectAditivosFromForm(),
                     aditivoTermo: '',
                     aditivoValidade: '',
+
                     equipe: equipe
                 };
                 const novaObservacao = document.getElementById('nova-observacao').value.trim();
@@ -2101,6 +2111,7 @@
                         document.getElementById('dataPrevisao').value = project.dataPrevisao;
                         document.getElementById('contrato-numero').value = project.numeroContrato || '';
                         document.getElementById('contrato-vigencia').value = project.vigenciaContrato || '';
+
                         const contratoValorInput = document.getElementById('contrato-valor');
                         if (contratoValorInput) {
                             contratoValorInput.value = project.valorContrato ? project.valorContrato.toString().replace('.', ',') : '';
@@ -2110,6 +2121,7 @@
                             contratoValidadeInput.value = project.vigenciaContratoFim || '';
                         }
                         renderAditivosInputs(project.aditivos || []);
+
 
                         const obsContainer = document.getElementById('observacoes-container');
                         obsContainer.innerHTML = project.observacoes.map(obs => `<div class="text-xs bg-slate-800 p-2 rounded"><p>${obs.text}</p><p class="text-slate-400 text-right">${new Date(obs.date).toLocaleString('pt-BR')}</p></div>`).join('') || '<p class="text-xs text-slate-500">Nenhuma observação.</p>';
