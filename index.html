@@ -120,9 +120,9 @@
                 <ul class="space-y-1">
                     <li><a href="#" data-target="dashboard-view" class="flex items-center gap-3 p-3 rounded-lg text-white font-semibold gradient-bg"><i data-lucide="layout-dashboard"></i> Dashboard</a></li>
                     <li><a href="#" data-target="projetos-view" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-700 transition-colors"><i data-lucide="folder-kanban"></i> Projetos</a></li>
-                    <li><a href="#" data-target="ideias-view" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-700 transition-colors"><i data-lucide="lightbulb"></i> Ideias</a></li>
-                    <li><a href="#" data-target="mensagens-view" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-700 transition-colors"><i data-lucide="message-circle"></i> Mensagens</a></li>
                     <li><a href="#" data-target="cadastros-view" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-700 transition-colors"><i data-lucide="database"></i> Cadastros</a></li>
+                    <li><a href="#" data-target="mensagens-view" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-700 transition-colors"><i data-lucide="message-circle"></i> Mensagens</a></li>
+                    <li><a href="#" data-target="ideias-view" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-700 transition-colors"><i data-lucide="lightbulb"></i> Ideias</a></li>
                     <li><a href="#" data-target="relatorios-view" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-700 transition-colors"><i data-lucide="bar-chart-3"></i> Relatórios</a></li>
                     <li><a href="#" data-target="configuracoes-view" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-700 transition-colors"><i data-lucide="settings"></i> Configurações</a></li>
                 </ul>
@@ -514,9 +514,28 @@
                 return `${prefix}${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
             }
 
+            function fixEncodingIssues(text) {
+                if (!text) return '';
+                const cleaned = text.replace(/\uFEFF/g, '');
+                if (!/[ÃÂÊÔÕãõâêôàèìòùÁÉÍÓÚáéíóúçÇ]/.test(cleaned)) {
+                    return cleaned;
+                }
+                try {
+                    if (typeof TextDecoder === 'undefined') {
+                        return cleaned;
+                    }
+                    const bytes = Uint8Array.from(cleaned.split('').map(char => char.charCodeAt(0)));
+                    const decoded = new TextDecoder('utf-8').decode(bytes);
+                    return decoded || cleaned;
+                } catch (error) {
+                    return cleaned;
+                }
+            }
+
             function sanitizeText(value) {
                 if (value === undefined || value === null) return '';
-                return String(value).trim();
+                const text = String(value).trim();
+                return fixEncodingIssues(text);
             }
 
             function normalizeComparisonText(value) {
@@ -575,8 +594,9 @@
                     ];
                     imported = mapRowsToObjects(rows, config, values => {
                         const nome = sanitizeText(values.nome);
-                        const cargo = sanitizeText(values.cargo);
-                        if (!nome || !cargo) return null;
+                        if (!nome) return null;
+                        const cargoRaw = sanitizeText(values.cargo);
+                        const cargo = cargoRaw || 'Não informado';
                         const email = sanitizeText(values.email);
                         const teamName = sanitizeText(values.teamName);
                         const telefone = normalizeNumericString(values.telefone);
@@ -646,8 +666,8 @@
             async function fetchSheetRows(path) {
                 const response = await fetch(path, { cache: 'no-store' });
                 if (!response.ok) throw new Error(`Falha ao carregar "${path}": ${response.status}`);
-                const text = await response.text();
-                const workbook = XLSX.read(text, { type: 'string' });
+                const buffer = await response.arrayBuffer();
+                const workbook = XLSX.read(buffer, { type: 'array', codepage: 65001 });
                 const firstSheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[firstSheetName];
                 return XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' })
@@ -1762,7 +1782,7 @@
                 reader.onload = e => {
                     try {
                         const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, { type: 'array' });
+                        const workbook = XLSX.read(data, { type: 'array', codepage: 65001 });
                         const firstSheetName = workbook.SheetNames[0];
                         const worksheet = workbook.Sheets[firstSheetName];
                         const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' })
