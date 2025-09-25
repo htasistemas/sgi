@@ -217,7 +217,7 @@
         
         <!-- ########## VIEW: DASHBOARD ########## -->
         <div id="dashboard-view" data-view>
-            <header class="flex justify-between items-center mb-8"><h2 class="text-3xl font-bold text-white">Dashboard Principal</h2><button id="add-project-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus-circle"></i> Novo Projeto</button></header>
+            <header class="flex justify-between items-center mb-8"><h2 class="text-3xl font-bold text-white">Dashboard Principal</h2></header>
             <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <div class="bg-[#1E2A47] p-6 rounded-xl card-hover-effect">
                     <div class="flex justify-between items-start"><h3 class="font-semibold text-slate-300">Projetos Ativos 🚀</h3><i data-lucide="rocket" class="text-blue-400"></i></div>
@@ -291,14 +291,15 @@
 
         <!-- ########## VIEW: PROJETOS ########## -->
         <div id="projetos-view" data-view class="hidden">
-            <header class="flex justify-between items-center mb-8"><h2 class="text-3xl font-bold text-white">Gerenciamento de Projetos 📂</h2></header>
-            <section id="project-cards-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"></section>
+            <header class="flex justify-between items-center mb-8"><h2 class="text-3xl font-bold text-white">Gerenciamento de Projetos 📂</h2><button id="add-project-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus-circle"></i> Novo Projeto</button></header>
+            <section id="project-cards-container" class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6"></section>
         </div>
 
         <!-- ########## VIEW: IDEIAS ########## -->
         <div id="ideias-view" data-view class="hidden">
             <header class="flex justify-between items-center mb-8"><h2 class="text-3xl font-bold text-white">Banco de Ideias 💡</h2><button id="add-ideia-btn" class="gradient-bg text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"><i data-lucide="plus"></i> Nova Ideia</button></header>
             <section id="ideias-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"></section>
+            <section id="ideias-decisao-container" class="mt-10 space-y-4"></section>
         </div>
 
         <!-- ########## VIEW: MENSAGENS ########## -->
@@ -575,6 +576,32 @@
                     upvotes: 31,
                 }
             ];
+            const IDEA_DECISION_OPTIONS = [
+                {
+                    value: 'Analisando',
+                    label: 'Analisando',
+                    heading: 'Em análise',
+                    buttonActiveClasses: 'border-amber-400/60 bg-amber-500/20 text-amber-100',
+                    badgeClasses: 'bg-amber-500/20 text-amber-100 border border-amber-400/60'
+                },
+                {
+                    value: 'Aceita',
+                    label: 'Aceita',
+                    heading: 'Aceitas',
+                    buttonActiveClasses: 'border-emerald-400/60 bg-emerald-500/20 text-emerald-100',
+                    badgeClasses: 'bg-emerald-500/20 text-emerald-100 border border-emerald-400/60'
+                },
+                {
+                    value: 'Rejeitada',
+                    label: 'Rejeitada',
+                    heading: 'Rejeitadas',
+                    buttonActiveClasses: 'border-rose-400/60 bg-rose-500/20 text-rose-100',
+                    badgeClasses: 'bg-rose-500/20 text-rose-100 border border-rose-400/60'
+                }
+            ];
+            const IDEA_DECISION_VALUES = new Set(IDEA_DECISION_OPTIONS.map(option => option.value));
+            const IDEA_DECISION_BUTTON_BASE_CLASS = 'px-3 py-1 rounded-full text-xs font-semibold border transition-colors';
+            const IDEA_DECISION_BUTTON_INACTIVE_CLASSES = 'border-slate-700 text-slate-300 hover:text-white hover:border-slate-500';
             let importContext = null;
 
             const importInput = document.getElementById('import-input');
@@ -591,6 +618,10 @@
                     projectSearchTerm = event.target.value || '';
                     renderProjects();
                 });
+            }
+            const ideiasContainerElement = document.getElementById('ideias-container');
+            if (ideiasContainerElement) {
+                ideiasContainerElement.addEventListener('click', handleIdeaDecisionClick);
             }
 
             const storageAvailable = (() => {
@@ -1159,7 +1190,7 @@
                 renderProjects();
                 renderContractAlerts();
                 renderTeam(); renderSistemas(); renderClientes(); renderStatuses();
-                renderReports(); updateKPIs(); analyzeDataForAI(); ensureDefaultIdeias(); renderIdeias(); renderKB();
+                renderReports(); updateKPIs(); analyzeDataForAI(); ensureDefaultIdeias(); ensureIdeiasHaveDecision(); renderIdeias(); renderIdeiasDecisoes(); renderKB();
                 renderWhatsappMessages();
 
                 renderMessageSuggestions();
@@ -1314,12 +1345,8 @@
 
                     const projectBlockHTML = `
                         <div class="bg-slate-800/60 border border-slate-700 rounded-lg p-4 space-y-4 card-hover-effect">
-                            <div class="flex items-start justify-between gap-3">
-                                <div>
-                                    <h4 class="text-lg font-semibold text-white">${clienteNome}</h4>
-                                    <p class="text-sm text-slate-400">${cidadeTexto}</p>
-                                </div>
-                                ${statusPill}
+                            <div>
+                                <h4 class="text-lg font-semibold text-white">${clienteNome}</h4>
                             </div>
                             <div>
                                 <p class="text-xs uppercase tracking-wide text-slate-400 mb-2">Progresso</p>
@@ -1332,15 +1359,19 @@
                             </div>
                             <details class="bg-slate-900/40 border border-slate-700/60 rounded-lg p-3">
                                 <summary class="text-sm text-cyan-300 font-semibold cursor-pointer">Ver detalhes completos</summary>
-                                <div class="mt-3 space-y-3">
+                                <div class="mt-3 space-y-4">
+                                    <div class="flex flex-wrap items-center justify-between gap-3">
+                                        <p class="text-sm text-slate-400">${cidadeTexto}</p>
+                                        ${statusPill}
+                                    </div>
+                                    ${resumoInfoCards}
                                     ${detalhesHTML}
+                                    <div class="flex justify-end gap-3 pt-3 border-t border-slate-700/60">
+                                        <button class="edit-btn" data-type="project" data-id="${projectId}"><i data-lucide="edit" class="text-cyan-400"></i></button>
+                                        <button class="delete-btn" data-type="project" data-id="${projectId}"><i data-lucide="trash-2" class="text-red-400"></i></button>
+                                    </div>
                                 </div>
                             </details>
-                            ${resumoInfoCards}
-                            <div class="flex justify-end gap-3 pt-3 border-t border-slate-700/60">
-                                <button class="edit-btn" data-type="project" data-id="${projectId}"><i data-lucide="edit" class="text-cyan-400"></i></button>
-                                <button class="delete-btn" data-type="project" data-id="${projectId}"><i data-lucide="trash-2" class="text-red-400"></i></button>
-                            </div>
                         </div>`;
                     projectsBlocksContainer.innerHTML += projectBlockHTML;
 
@@ -1361,15 +1392,29 @@
                         ? `${aditivosPreviewItems}${aditivos.length > 2 ? `<p class="text-xs text-slate-400">+ ${aditivos.length - 2} aditivo(s) adicional(is)</p>` : ''}`
                         : '<p class="text-xs text-slate-500">Nenhum aditivo cadastrado.</p>';
 
-                    projectCardsContainer.innerHTML += `<div class="bg-[#1E2A47] p-6 rounded-xl card-hover-effect flex flex-col justify-between relative"><div><div class="flex justify-between items-start mb-4 gap-4"><div class="pr-8"><h4 class="font-bold text-lg">${clienteNome}</h4><p class="text-sm text-slate-400">${sistemasLabel}</p></div>${statusPill}</div><div class="mb-4"><div class="text-right text-sm mt-1 mb-1">${normalized.progresso}%</div><div class="w-full bg-slate-600 rounded-full h-2.5"><div class="bg-gradient-to-r from-cyan-400 to-blue-500 h-2.5 rounded-full" style="width: ${normalized.progresso}%"></div></div></div><div class="space-y-3 text-sm text-slate-300"><div><span class="text-xs uppercase text-slate-500 block">Contrato</span><div class="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-slate-200"><span>Nº ${numeroContratoTexto}</span><span>${valorContratoTexto}</span></div></div><div><span class="text-xs uppercase text-slate-500 block">Vigência</span><div class="flex flex-wrap gap-2 items-center mt-1"><span>${vigenciaDescricaoTexto}</span>${vigenciaBadge}</div></div><div><span class="text-xs uppercase text-slate-500 block">Aditivos (${aditivos.length})</span><div class="mt-1 space-y-2">${aditivosPreview}</div></div></div>${aditivoLimiteExcedido ? '<div class="mt-4 text-xs text-amber-200 bg-amber-500/10 border border-amber-400/30 rounded-lg p-3 flex items-center gap-2"><i data-lucide="alert-triangle" class="w-4 h-4"></i><span>Total de aditivos ultrapassa 25% do valor contratual.</span></div>' : ''}</div><div class="border-t border-slate-700 pt-4 mt-4"><p class="text-sm text-slate-400 mb-2">Equipe responsável</p><div class="space-y-3">${cardTeamResumo}</div></div><div class="absolute top-4 right-4 flex flex-col gap-2"><button class="edit-btn" data-type="project" data-id="${projectId}"><i data-lucide="edit" class="text-cyan-400"></i></button><button class="delete-btn" data-type="project" data-id="${projectId}"><i data-lucide="trash-2" class="text-red-400"></i></button></div></div>`;
+                    projectCardsContainer.innerHTML += `<div class="bg-[#1E2A47] p-6 rounded-xl card-hover-effect flex flex-col justify-between"><div><div class="flex flex-wrap items-start justify-between gap-4 mb-4"><div class="flex-1 min-w-[220px]"><h4 class="font-bold text-lg">${clienteNome}</h4><p class="text-sm text-slate-400">${sistemasLabel}</p></div><div class="flex items-start gap-3 flex-wrap justify-end"><div class="flex items-center justify-end">${statusPill}</div><div class="flex items-center gap-2"><button class="edit-btn" data-type="project" data-id="${projectId}"><i data-lucide="edit" class="text-cyan-400"></i></button><button class="delete-btn" data-type="project" data-id="${projectId}"><i data-lucide="trash-2" class="text-red-400"></i></button></div></div></div><div class="mb-4"><div class="text-right text-sm mt-1 mb-1">${normalized.progresso}%</div><div class="w-full bg-slate-600 rounded-full h-2.5"><div class="bg-gradient-to-r from-cyan-400 to-blue-500 h-2.5 rounded-full" style="width: ${normalized.progresso}%"></div></div></div><div class="space-y-3 text-sm text-slate-300"><div><span class="text-xs uppercase text-slate-500 block">Contrato</span><div class="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-slate-200"><span>Nº ${numeroContratoTexto}</span><span>${valorContratoTexto}</span></div></div><div><span class="text-xs uppercase text-slate-500 block">Vigência</span><div class="flex flex-wrap gap-2 items-center mt-1"><span>${vigenciaDescricaoTexto}</span>${vigenciaBadge}</div></div><div><span class="text-xs uppercase text-slate-500 block">Aditivos (${aditivos.length})</span><div class="mt-1 space-y-2">${aditivosPreview}</div></div></div>${aditivoLimiteExcedido ? '<div class="mt-4 text-xs text-amber-200 bg-amber-500/10 border border-amber-400/30 rounded-lg p-3 flex items-center gap-2"><i data-lucide="alert-triangle" class="w-4 h-4"></i><span>Total de aditivos ultrapassa 25% do valor contratual.</span></div>' : ''}</div><div class="border-t border-slate-700 pt-4 mt-4"><p class="text-sm text-slate-400 mb-2">Equipe responsável</p><div class="space-y-3">${cardTeamResumo}</div></div></div>`;
                 });
 
             }
 
             function ensureDefaultIdeias() {
                 if (!Array.isArray(ideias) || ideias.length === 0) {
-                    ideias = defaultIdeaSuggestions.map(idea => ({ ...idea }));
+                    ideias = defaultIdeaSuggestions.map(idea => ({
+                        ...idea,
+                        decision: IDEA_DECISION_VALUES.has(idea.decision) ? idea.decision : null,
+                    }));
                 }
+            }
+
+            function ensureIdeiasHaveDecision() {
+                if (!Array.isArray(ideias)) {
+                    ideias = [];
+                    return;
+                }
+                ideias = ideias.map(idea => ({
+                    ...idea,
+                    decision: IDEA_DECISION_VALUES.has(idea.decision) ? idea.decision : null,
+                }));
             }
 
             function renderContractAlerts() {
@@ -1562,22 +1607,93 @@
             
             function renderIdeias() {
                 const container = document.getElementById('ideias-container');
-                if(!container) return;
+                if (!container) return;
                 container.innerHTML = '';
                 ideias.forEach(idea => {
-                    container.innerHTML += `<div class="bg-[#1E2A47] p-6 rounded-xl card-hover-effect">
+                    const titulo = escapeHTML(idea.titulo || 'Ideia sem título');
+                    const categoria = escapeHTML(idea.categoria || 'Sem categoria');
+                    const descricao = escapeHTML(idea.descricao || 'Sem descrição.').replace(/\n/g, '<br>');
+                    const autor = escapeHTML(idea.author || 'Autor desconhecido');
+                    const statusOriginal = escapeHTML(idea.status || 'Nova');
+                    const upvotes = Number.isFinite(idea.upvotes) ? idea.upvotes : parseInt(idea.upvotes, 10) || 0;
+                    const activeDecision = IDEA_DECISION_OPTIONS.find(option => option.value === idea.decision);
+                    const decisionBadge = activeDecision
+                        ? `<span class="text-xs font-semibold px-2 py-1 rounded-full ${activeDecision.badgeClasses}">${activeDecision.label}</span>`
+                        : '<span class="text-xs text-slate-400">Sem classificação</span>';
+                    const decisionButtons = IDEA_DECISION_OPTIONS.map(option => {
+                        const isActive = option.value === idea.decision;
+                        const classes = `${IDEA_DECISION_BUTTON_BASE_CLASS} ${isActive ? option.buttonActiveClasses : IDEA_DECISION_BUTTON_INACTIVE_CLASSES}`;
+                        return `<button data-role="idea-decision" data-id="${idea.id}" data-decision="${option.value}" class="${classes}">${option.label}</button>`;
+                    }).join('');
+                    container.innerHTML += `<div class="bg-[#1E2A47] p-6 rounded-xl card-hover-effect flex flex-col gap-4">
                         <div class="flex justify-between items-start">
-                           <div>
-                             <h4 class="font-bold text-lg text-cyan-400">${idea.titulo}</h4>
-                             <span class="text-xs bg-slate-700 px-2 py-1 rounded-full">${idea.categoria}</span>
-                           </div>
-                           <button class="flex items-center gap-1 text-slate-400 hover:text-white"><i data-lucide="thumbs-up" class="w-4 h-4"></i>${idea.upvotes || 0}</button>
+                            <div>
+                                <h4 class="font-bold text-lg text-cyan-400">${titulo}</h4>
+                                <span class="text-xs bg-slate-700 px-2 py-1 rounded-full">${categoria}</span>
+                            </div>
+                            <button class="flex items-center gap-1 text-slate-400 hover:text-white" title="Curtidas">
+                                <i data-lucide="thumbs-up" class="w-4 h-4"></i>${upvotes}
+                            </button>
                         </div>
-                        <p class="text-slate-400 my-2 text-xs">Sugerido por: ${idea.author}</p>
-                        <p class="text-slate-300 my-4 text-sm">${idea.descricao}</p>
-                        <div class="text-right font-semibold">${idea.status}</div>
+                        <p class="text-slate-400 text-xs">Sugerido por: ${autor}</p>
+                        <p class="text-slate-300 text-sm leading-relaxed">${descricao}</p>
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <span class="text-xs uppercase tracking-wide text-slate-500">Status original</span>
+                            <span class="text-xs font-semibold text-slate-200">${statusOriginal}</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <span class="text-xs uppercase tracking-wide text-slate-500">Classificação</span>
+                            ${decisionBadge}
+                        </div>
+                        <div class="flex flex-wrap gap-2">${decisionButtons}</div>
                     </div>`;
                 });
+                lucide.createIcons();
+            }
+
+            function renderIdeiasDecisoes() {
+                const container = document.getElementById('ideias-decisao-container');
+                if (!container) return;
+
+                const ideasByDecision = ideias.reduce((acc, idea) => {
+                    if (!IDEA_DECISION_VALUES.has(idea.decision)) return acc;
+                    const key = idea.decision;
+                    if (!acc[key]) acc[key] = [];
+                    acc[key].push(idea);
+                    return acc;
+                }, {});
+
+                container.innerHTML = '<h3 class="text-2xl font-semibold text-white">Ideias classificadas</h3>';
+
+                const hasAny = Object.values(ideasByDecision).some(list => list.length > 0);
+                if (!hasAny) {
+                    container.innerHTML += '<p class="text-sm text-slate-400">Selecione uma classificação para ver as ideias organizadas aqui.</p>';
+                    return;
+                }
+
+                const cardsHtml = IDEA_DECISION_OPTIONS.map(option => {
+                    const items = ideasByDecision[option.value] || [];
+                    const itemsHtml = items.length
+                        ? `<ul class="space-y-2 text-sm text-slate-300">${items.map(idea => `<li class="bg-slate-900/40 border border-slate-700/60 rounded-lg px-3 py-2 space-y-1"><span class="font-semibold text-cyan-300 block">${escapeHTML(idea.titulo || 'Ideia')}</span><span class="text-xs text-slate-400 block">${escapeHTML(idea.author || 'Autor desconhecido')}</span></li>`).join('')}</ul>`
+                        : `<p class="text-sm text-slate-500">Nenhuma ideia classificada como ${option.heading.toLowerCase()}.</p>`;
+                    return `<div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5 space-y-3"><div class="flex items-center justify-between gap-2"><h4 class="text-lg font-semibold text-white">${option.heading}</h4><span class="text-xs font-semibold px-2 py-1 rounded-full ${option.badgeClasses}">${items.length}</span></div>${itemsHtml}</div>`;
+                }).join('');
+
+                container.innerHTML += `<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">${cardsHtml}</div>`;
+            }
+
+            function handleIdeaDecisionClick(event) {
+                const button = event.target.closest('[data-role="idea-decision"]');
+                if (!button) return;
+                const ideaId = button.dataset.id;
+                const decision = button.dataset.decision;
+                if (!IDEA_DECISION_VALUES.has(decision)) return;
+                const idea = ideias.find(item => String(item.id) === String(ideaId));
+                if (!idea) return;
+                idea.decision = idea.decision === decision ? null : decision;
+                renderIdeias();
+                renderIdeiasDecisoes();
+                saveData();
             }
             
             function renderKB() {
