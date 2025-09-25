@@ -97,6 +97,31 @@
             border-radius: 0.5rem;
             transition: background 0.3s ease, box-shadow 0.3s ease;
         }
+
+        /* Layout refinado para os detalhes dos projetos */
+        .project-details-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 1024px) {
+            .project-details-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (min-width: 1536px) {
+            .project-details-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        .project-detail-card {
+            border-radius: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
     </style>
 </head>
 <body class="flex antialiased">
@@ -1106,17 +1131,17 @@
                             </div>
                         </div>`;
 
-                    const contratoCard = `<div class="bg-slate-800/60 border border-slate-700 rounded-lg p-4 space-y-3"><div class="flex items-center justify-between gap-2"><p class="text-xs uppercase tracking-wide text-slate-400">Resumo do Contrato</p>${aditivoLimiteExcedido ? '<span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full bg-amber-500/20 text-amber-200 border border-amber-500/40"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>Limite 25% excedido</span>' : ''}</div><div class="space-y-2 text-sm text-slate-300"><div><span class="text-xs uppercase text-slate-500 block">Número</span><span class="text-slate-100 font-semibold">${numeroContratoTexto}</span></div><div><span class="text-xs uppercase text-slate-500 block">Valor</span><span class="text-slate-100 font-semibold">${valorContratoTexto}</span></div><div><span class="text-xs uppercase text-slate-500 block">Total dos aditivos</span><span class="text-slate-100 font-semibold">${totalAditivosTexto}</span>${aditivoPercentualTexto ? `<span class="block text-xs text-slate-400 mt-1">${aditivoPercentualTexto}</span>` : ''}</div></div>${aditivoLimiteExcedido ? '<div class="text-xs text-amber-200 bg-amber-500/10 border border-amber-500/40 rounded-md p-2 flex items-center gap-2"><i data-lucide="shield-alert" class="w-4 h-4"></i><span>O somatório dos aditivos ultrapassa 25% do valor contratual.</span></div>' : ''}</div>`;
+                    const contratoCard = `<div class="project-detail-card bg-slate-800/60 border border-slate-700 p-4"><div class="flex items-center justify-between gap-2"><p class="text-xs uppercase tracking-wide text-slate-400">Resumo do Contrato</p>${aditivoLimiteExcedido ? '<span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full bg-amber-500/20 text-amber-200 border border-amber-500/40"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>Limite 25% excedido</span>' : ''}</div><div class="space-y-2 text-sm text-slate-300"><div><span class="text-xs uppercase text-slate-500 block">Número</span><span class="text-slate-100 font-semibold">${numeroContratoTexto}</span></div><div><span class="text-xs uppercase text-slate-500 block">Valor</span><span class="text-slate-100 font-semibold">${valorContratoTexto}</span></div><div><span class="text-xs uppercase text-slate-500 block">Total dos aditivos</span><span class="text-slate-100 font-semibold">${totalAditivosTexto}</span>${aditivoPercentualTexto ? `<span class="block text-xs text-slate-400 mt-1">${aditivoPercentualTexto}</span>` : ''}</div></div>${aditivoLimiteExcedido ? '<div class="text-xs text-amber-200 bg-amber-500/10 border border-amber-500/40 rounded-md p-2 flex items-center gap-2"><i data-lucide="shield-alert" class="w-4 h-4"></i><span>O somatório dos aditivos ultrapassa 25% do valor contratual.</span></div>' : ''}</div>`;
 
-                    const gestaoCard = `<div class="bg-slate-800/60 border border-slate-700 rounded-lg p-4 space-y-3"><p class="text-xs uppercase tracking-wide text-slate-400">Gestão do Projeto</p><div class="space-y-2 text-sm text-slate-300"><div><span class="text-xs uppercase text-slate-500 block">Ger. Comercial</span><span class="text-slate-100 font-semibold">${escapeHTML(gerenteComercial)}</span></div><div><span class="text-xs uppercase text-slate-500 block">Ger. Técnico</span><span class="text-slate-100 font-semibold">${escapeHTML(gerenteTecnico)}</span></div><div><span class="text-xs uppercase text-slate-500 block">Cidade</span><span class="text-slate-100 font-semibold">${cidadeTexto}</span></div></div><div><span class="text-xs uppercase text-slate-500 block mb-1">Status atual</span>${statusPill}</div></div>`;
+                    const gestaoCard = `<div class="project-detail-card bg-slate-800/60 border border-slate-700 p-4"><p class="text-xs uppercase tracking-wide text-slate-400">Gestão do Projeto</p><div class="space-y-2 text-sm text-slate-300"><div><span class="text-xs uppercase text-slate-500 block">Ger. Comercial</span><span class="text-slate-100 font-semibold">${escapeHTML(gerenteComercial)}</span></div><div><span class="text-xs uppercase text-slate-500 block">Ger. Técnico</span><span class="text-slate-100 font-semibold">${escapeHTML(gerenteTecnico)}</span></div><div><span class="text-xs uppercase text-slate-500 block">Cidade</span><span class="text-slate-100 font-semibold">${cidadeTexto}</span></div></div><div><span class="text-xs uppercase text-slate-500 block mb-1">Status atual</span>${statusPill}</div></div>`;
 
-                    const prazoCard = `<div class="bg-slate-800/60 border border-slate-700 rounded-lg p-4 space-y-3"><p class="text-xs uppercase tracking-wide text-slate-400">Prazos e Vigência</p><div class="grid grid-cols-1 gap-2 text-sm text-slate-300"><div><span class="text-xs uppercase text-slate-500 block">Início</span><span class="text-slate-100 font-semibold">${dataInicioTexto}</span></div><div><span class="text-xs uppercase text-slate-500 block">Previsão</span><span class="text-slate-100 font-semibold">${dataPrevisaoTexto}</span></div></div><div class="flex flex-wrap gap-2 items-center">${vigenciaBadge}</div><p class="text-xs text-slate-400">Descrição: ${vigenciaDescricaoTexto}</p></div>`;
+                    const prazoCard = `<div class="project-detail-card bg-slate-800/60 border border-slate-700 p-4"><p class="text-xs uppercase tracking-wide text-slate-400">Prazos e Vigência</p><div class="grid grid-cols-1 gap-2 text-sm text-slate-300"><div><span class="text-xs uppercase text-slate-500 block">Início</span><span class="text-slate-100 font-semibold">${dataInicioTexto}</span></div><div><span class="text-xs uppercase text-slate-500 block">Previsão</span><span class="text-slate-100 font-semibold">${dataPrevisaoTexto}</span></div></div><div class="flex flex-wrap gap-2 items-center">${vigenciaBadge}</div><p class="text-xs text-slate-400">Descrição: ${vigenciaDescricaoTexto}</p></div>`;
 
-                    const aditivosCard = `<div class="bg-slate-800/60 border border-slate-700 rounded-lg p-4 space-y-3 xl:col-span-3"><div class="flex items-center justify-between gap-2"><p class="text-xs uppercase tracking-wide text-slate-400">Aditivos Contratuais</p><span class="text-xs text-slate-400">Total: ${aditivos.length}</span></div>${aditivosCardContent}</div>`;
+                    const aditivosCard = `<div class="project-detail-card bg-slate-800/60 border border-slate-700 p-4 lg:col-span-2 2xl:col-span-3"><div class="flex items-center justify-between gap-2"><p class="text-xs uppercase tracking-wide text-slate-400">Aditivos Contratuais</p><span class="text-xs text-slate-400">Total: ${aditivos.length}</span></div>${aditivosCardContent}</div>`;
 
-                    const modulosCard = `<div class="bg-slate-800/60 border border-slate-700 rounded-lg p-4 space-y-3 xl:col-span-3"><div class="flex items-center justify-between gap-2"><p class="text-xs uppercase tracking-wide text-slate-400">Módulos Selecionados</p><span class="text-xs text-slate-400">${projectSystemsList.length} módulo${projectSystemsList.length === 1 ? '' : 's'}</span></div><div class="flex flex-wrap gap-2">${moduleSummaryBadges}</div></div>`;
+                    const modulosCard = `<div class="project-detail-card bg-slate-800/60 border border-slate-700 p-4 lg:col-span-2 2xl:col-span-3"><div class="flex items-center justify-between gap-2"><p class="text-xs uppercase tracking-wide text-slate-400">Módulos Selecionados</p><span class="text-xs text-slate-400">${projectSystemsList.length} módulo${projectSystemsList.length === 1 ? '' : 's'}</span></div><div class="flex flex-wrap gap-2">${moduleSummaryBadges}</div></div>`;
 
-                    const detalhesHTML = `<div class="grid grid-cols-1 xl:grid-cols-3 gap-4">${contratoCard}${gestaoCard}${prazoCard}${aditivosCard}${modulosCard}</div>`;
+                    const detalhesHTML = `<div class="project-details-grid">${contratoCard}${gestaoCard}${prazoCard}${aditivosCard}${modulosCard}</div>`;
 
                     const projectBlockHTML = `
                         <div class="bg-slate-800/60 border border-slate-700 rounded-lg p-4 space-y-4 card-hover-effect">
