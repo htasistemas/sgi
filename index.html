@@ -162,6 +162,9 @@
             max-width: 100%;
             white-space: normal;
             word-break: break-word;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            text-align: left;
         }
 
         .due-status-badge > i {
@@ -301,7 +304,7 @@
                 <div class="flex items-start justify-between gap-4 flex-wrap">
                     <div>
                         <h3 class="text-xl font-bold text-white mb-1">Sugestões prontas para sua equipe</h3>
-                        <p class="text-sm text-slate-300 max-w-3xl">Escolha uma das mensagens recomendadas para iniciar conversas com o time. Ao enviar pelo WhatsApp, os marcadores <span class="font-semibold text-cyan-300">[NOME]</span> e <span class="font-semibold text-cyan-300">[EQUIPE]</span> serão substituídos automaticamente pelo nome do colaborador e da equipe.</p>
+                        <p class="text-sm text-slate-300 max-w-3xl">Escolha uma das mensagens recomendadas para iniciar conversas com o time. Ao enviar pelo WhatsApp, o marcador <span class="font-semibold text-cyan-300">[NOME]</span> será substituído automaticamente pelo nome do colaborador.</p>
                     </div>
                 </div>
                 <div id="message-suggestions" class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
@@ -487,22 +490,37 @@
                 {
                     id: 'suggestion-welcome',
                     title: 'Boas-vindas ao projeto',
-                    text: 'Olá [NOME]! Bem-vindo(a) ao projeto. A equipe [EQUIPE] está pronta para apoiar você no que for preciso. Vamos juntos alcançar os resultados planejados?'
+                    text: 'Olá [NOME]! Bem-vindo(a) ao projeto. Conte comigo para o que precisar nessa nova fase.'
                 },
                 {
                     id: 'suggestion-checkin',
                     title: 'Check-in semanal',
-                    text: 'Oi [NOME], tudo bem? Passando para saber como estão as atividades dessa semana da equipe [EQUIPE]. Precisa de algum suporte extra?'
+                    text: 'Oi [NOME], tudo bem? Como estão as prioridades desta semana? Precisa de algum suporte extra?'
                 },
                 {
                     id: 'suggestion-recognition',
                     title: 'Reconhecimento de destaque',
-                    text: 'Parabéns [NOME]! O desempenho da equipe [EQUIPE] está chamando atenção. Continue assim, conte comigo para mantermos esse ritmo excelente.'
+                    text: 'Parabéns [NOME]! Seu compromisso tem feito a diferença no andamento das entregas. Continue assim!'
                 },
                 {
                     id: 'suggestion-reminder',
                     title: 'Lembrete de alinhamento',
-                    text: 'Olá [NOME], lembrando que amanhã teremos nosso alinhamento da equipe [EQUIPE]. Se precisar ajustar algo na pauta é só me avisar.'
+                    text: 'Olá [NOME], lembrando que amanhã teremos nosso alinhamento rápido. Caso precise incluir algum ponto é só me avisar.'
+                },
+                {
+                    id: 'suggestion-week-close',
+                    title: 'Encerramento da semana',
+                    text: 'Oi [NOME], passando para agradecer pelo empenho desta semana. Aproveite para registrar os aprendizados principais.'
+                },
+                {
+                    id: 'suggestion-support',
+                    title: 'Suporte para pendências',
+                    text: 'Olá [NOME], vi que surgiram algumas pendências. Vamos conversar para organizar as prioridades e remover obstáculos?'
+                },
+                {
+                    id: 'suggestion-news',
+                    title: 'Compartilhamento de novidades',
+                    text: 'Bom dia [NOME]! Temos novidades importantes sobre o projeto. Posso te ligar mais tarde para alinhar os próximos passos?'
                 }
             ];
             let importContext = null;
@@ -1049,7 +1067,7 @@
 
                 defaultMessageSuggestions.forEach(suggestion => {
                     const alreadySaved = whatsappMessages.some(msg => msg.text.trim() === suggestion.text.trim());
-                    const highlightedText = suggestion.text.replace(/\[(NOME|EQUIPE)\]/g, '<span class="text-cyan-300 font-semibold">[$1]</span>');
+                const highlightedText = suggestion.text.replace(/\[NOME\]/g, '<span class="text-cyan-300 font-semibold">[NOME]</span>');
                     container.innerHTML += `
                         <div class="bg-slate-800/60 border border-slate-700 rounded-lg p-4 flex flex-col justify-between">
                             <div>
@@ -2225,7 +2243,7 @@
                 if (type === 'status') formContent.innerHTML = `<div><label>Nome do Status</label><input name="text" value="${item.text || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Cor</label><input name="color" type="color" value="${item.color || '#64748B'}" class="w-full h-10 p-1 bg-slate-700 rounded-lg"></div>`;
                 if (type === 'ideia') formContent.innerHTML = `<div><label>Título da Ideia</label><input name="titulo" value="${item.titulo || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Categoria</label><input name="categoria" value="${item.categoria || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg"></div><div><label>Descrição</label><textarea name="descricao" rows="4" class="w-full bg-slate-700 p-2.5 rounded-lg">${item.descricao || ''}</textarea></div><div><label>Status</label><select name="status" class="w-full bg-slate-700 p-2.5 rounded-lg"><option>Nova</option><option>Em Análise</option><option>Aprovada</option><option>Rejeitada</option></select></div>`;
                 if (type === 'kb') formContent.innerHTML = `<div><label>Título do Artigo</label><input name="titulo" value="${item.titulo || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Categoria</label><input name="categoria" value="${item.categoria || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg"></div><div><label>Conteúdo</label><textarea name="conteudo" rows="6" class="w-full bg-slate-700 p-2.5 rounded-lg">${item.conteudo || ''}</textarea></div>`;
-                if (type === 'mensagem') formContent.innerHTML = `<div><label>Título da Mensagem</label><input name="title" value="${item.title || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Texto da Mensagem</label><textarea name="text" rows="4" class="w-full bg-slate-700 p-2.5 rounded-lg" placeholder="Use [NOME] para o nome do destinatário e [EQUIPE] para o nome da equipe." required>${item.text || ''}</textarea></div>`;
+                if (type === 'mensagem') formContent.innerHTML = `<div><label>Título da Mensagem</label><input name="title" value="${item.title || ''}" class="w-full bg-slate-700 p-2.5 rounded-lg" required></div><div><label>Texto da Mensagem</label><textarea name="text" rows="4" class="w-full bg-slate-700 p-2.5 rounded-lg" placeholder="Use [NOME] para inserir automaticamente o nome do destinatário." required>${item.text || ''}</textarea></div>`;
 
                 openGenericModal(editModal);
             }
@@ -2452,23 +2470,15 @@
                         btn.innerHTML = `<div class="font-bold">${msg.title}</div><p class="text-sm text-slate-400 truncate">${msg.text}</p>`;
                         btn.onclick = () => {
                             const firstName = (member.nome || '').split(' ')[0] || member.nome;
-                            const teamName = member.teamName || 'sua equipe';
                             let messageText = (msg.text || '').trim();
                             const hasNamePlaceholder = /\[NOME\]/i.test(messageText);
-                            const hasTeamPlaceholder = /\[EQUIPE\]/i.test(messageText);
 
                             if (!hasNamePlaceholder) {
                                 const greeting = `Olá ${firstName}`;
                                 messageText = messageText ? `${greeting}, ${messageText}` : `${greeting}!`;
                             }
 
-                            messageText = messageText
-                                .replace(/\[NOME\]/gi, firstName)
-                                .replace(/\[EQUIPE\]/gi, teamName);
-
-                            if (!hasTeamPlaceholder && teamName && teamName !== 'sua equipe') {
-                                messageText = `${messageText} (Equipe: ${teamName})`;
-                            }
+                            messageText = messageText.replace(/\[NOME\]/gi, firstName);
 
                             const url = `https://wa.me/${member.telefone}?text=${encodeURIComponent(messageText)}`;
                             window.open(url, '_blank');
