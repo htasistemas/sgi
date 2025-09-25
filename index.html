@@ -126,18 +126,15 @@
         .project-summary-grid {
             display: grid;
             gap: 1rem;
-            grid-template-columns: repeat(1, minmax(0, 1fr));
+
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            width: 100%;
         }
 
-        @media (min-width: 768px) {
+        @media (min-width: 1536px) {
             .project-summary-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-        }
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 
-        @media (min-width: 1280px) {
-            .project-summary-grid {
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             }
         }
 
@@ -146,13 +143,19 @@
             flex-direction: column;
             gap: 0.5rem;
             min-height: 100%;
+
+            min-width: 0;
+
         }
 
         .project-summary-card--team {
             gap: 0.75rem;
         }
 
-        @media (min-width: 1280px) {
+
+        @media (min-width: 1800px) {
+
+
             .project-summary-card--team {
                 grid-column: span 2;
             }
@@ -1174,6 +1177,8 @@
                             </div>
 
                             <div class="project-summary-card bg-slate-900/40 border border-slate-700/60 rounded-lg p-3">
+
+
 
                                 <span class="text-xs uppercase text-slate-500 block">Gestão</span>
                                 <div class="flex flex-col gap-1 mt-1 text-slate-200">
