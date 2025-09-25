@@ -160,6 +160,24 @@
                 grid-column: span 2;
             }
         }
+
+        .due-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1.2;
+            max-width: 100%;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .due-status-badge > i {
+            flex-shrink: 0;
+        }
     </style>
 </head>
 <body class="flex antialiased">
@@ -802,7 +820,7 @@
             }
 
             function renderDueStatusBadge(status, emptyLabel = 'Sem data definida') {
-                const baseClasses = 'inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap';
+                const baseClasses = 'due-status-badge';
                 if (!status) {
                     return `<span class="${baseClasses} bg-slate-700/60 text-slate-300 border border-slate-600/40"><i data-lucide="help-circle" class="w-3.5 h-3.5"></i>${emptyLabel}</span>`;
                 }
