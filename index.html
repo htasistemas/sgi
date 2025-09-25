@@ -276,8 +276,12 @@
 
         <!-- ########## VIEW: IMPLANTAÇÕES ########## -->
         <div id="implantacoes-view" data-view class="hidden">
-            <header class="flex justify-between items-center mb-8">
+            <header class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8">
                 <h2 class="text-3xl font-bold text-white">Acompanhamento de Implantações 🛠️</h2>
+                <div class="relative w-full md:w-80">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                    <input type="search" id="project-search-input" placeholder="Buscar cliente..." class="w-full bg-slate-800 border border-slate-700 rounded-lg py-2.5 pl-10 pr-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-400" aria-label="Buscar implantações por cliente">
+                </div>
             </header>
             <section class="bg-[#1E2A47] p-6 rounded-xl">
                 <p class="text-sm text-slate-300 mb-4">Visualize rapidamente o status das implantações em andamento e acesse os detalhes de cada cliente.</p>
@@ -486,6 +490,7 @@
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#39;') : '';
             let teamSearchTerm = '';
+            let projectSearchTerm = '';
             const defaultMessageSuggestions = [
                 {
                     id: 'suggestion-welcome',
@@ -523,14 +528,68 @@
                     text: 'Bom dia [NOME]! Temos novidades importantes sobre o projeto. Posso te ligar mais tarde para alinhar os próximos passos?'
                 }
             ];
+            const defaultIdeaSuggestions = [
+                {
+                    id: 'IDEA-playbook-digital',
+                    titulo: 'Playbook Digital de Implantação Guiada',
+                    categoria: 'Onboarding',
+                    descricao: 'Criar um playbook interativo com roteiros por fase, vídeos curtos e checklists inteligentes que podem ser enviados aos clientes para alinhamento diário.',
+                    author: 'SGI.AI',
+                    status: 'Em análise',
+                    upvotes: 37,
+                },
+                {
+                    id: 'IDEA-labs-pilotos',
+                    titulo: 'Laboratório de Pilotos Controlados',
+                    categoria: 'Qualidade',
+                    descricao: 'Oferecer ciclos rápidos de pilotos em ambiente controlado para validar integrações críticas antes da virada de chave definitiva.',
+                    author: 'SGI.AI',
+                    status: 'Priorizada',
+                    upvotes: 28,
+                },
+                {
+                    id: 'IDEA-analytics-progresso',
+                    titulo: 'Analytics de Engajamento do Cliente',
+                    categoria: 'Monitoramento',
+                    descricao: 'Monitorar automaticamente interações, respostas a tarefas e participação em rituais para gerar alertas de engajamento baixo e sugerir ações corretivas.',
+                    author: 'SGI.AI',
+                    status: 'Em teste',
+                    upvotes: 42,
+                },
+                {
+                    id: 'IDEA-academy-cliente',
+                    titulo: 'Academy do Cliente com Microlearning',
+                    categoria: 'Treinamento',
+                    descricao: 'Disponibilizar trilhas de aprendizagem com módulos rápidos, quizzes e certificações para acelerar a autonomia das equipes do cliente.',
+                    author: 'SGI.AI',
+                    status: 'Em análise',
+                    upvotes: 33,
+                },
+                {
+                    id: 'IDEA-comite-sucesso',
+                    titulo: 'Comitê de Sucesso da Implantação',
+                    categoria: 'Governança',
+                    descricao: 'Reunir mensalmente liderança do cliente e gestores internos para revisar indicadores, riscos e próximos marcos com base em dashboards inteligentes.',
+                    author: 'SGI.AI',
+                    status: 'Em planejamento',
+                    upvotes: 31,
+                }
+            ];
             let importContext = null;
 
             const importInput = document.getElementById('import-input');
             const teamSearchInput = document.getElementById('team-search-input');
+            const projectSearchInput = document.getElementById('project-search-input');
             if (teamSearchInput) {
                 teamSearchInput.addEventListener('input', event => {
                     teamSearchTerm = event.target.value || '';
                     renderTeam();
+                });
+            }
+            if (projectSearchInput) {
+                projectSearchInput.addEventListener('input', event => {
+                    projectSearchTerm = event.target.value || '';
+                    renderProjects();
                 });
             }
 
@@ -1100,7 +1159,7 @@
                 renderProjects();
                 renderContractAlerts();
                 renderTeam(); renderSistemas(); renderClientes(); renderStatuses();
-                renderReports(); updateKPIs(); analyzeDataForAI(); renderIdeias(); renderKB();
+                renderReports(); updateKPIs(); analyzeDataForAI(); ensureDefaultIdeias(); renderIdeias(); renderKB();
                 renderWhatsappMessages();
 
                 renderMessageSuggestions();
@@ -1115,12 +1174,34 @@
                 const projectCardsContainer = document.getElementById('project-cards-container');
                 if (!projectsBlocksContainer || !projectCardsContainer) return;
 
-                projectsBlocksContainer.innerHTML = ''; projectCardsContainer.innerHTML = '';
-                projects.forEach(project => {
+                projectsBlocksContainer.innerHTML = '';
+                projectCardsContainer.innerHTML = '';
+
+                const normalizedProjects = projects.map(project => {
                     const normalized = normalizeProjectData(project);
+                    normalized.id = normalized.id || project.id;
+                    return normalized;
+                });
+
+                const normalizedSearchTerm = normalizeText(projectSearchTerm.trim());
+                const filteredProjects = normalizedSearchTerm
+                    ? normalizedProjects.filter(project => {
+                        const cliente = clientes.find(c => c.id === project.clienteId);
+                        const clienteNome = normalizeText(cliente?.nome || '');
+                        return clienteNome.includes(normalizedSearchTerm);
+                    })
+                    : normalizedProjects;
+
+                if (!filteredProjects.length) {
+                    const emptyStateHtml = '<div class="col-span-full bg-[#1E2A47] p-6 rounded-xl text-center text-slate-400">Nenhuma implantação encontrada para a busca informada.</div>';
+                    projectsBlocksContainer.innerHTML = emptyStateHtml;
+                    projectCardsContainer.innerHTML = emptyStateHtml;
+                    return;
+                }
+
+                filteredProjects.forEach(normalized => {
                     const cliente = clientes.find(c => c.id === normalized.clienteId);
-                    const projectId = normalized.id || project.id;
-                    normalized.id = projectId;
+                    const projectId = normalized.id;
                     const projectSystemsList = (normalized.sistemasIds || []).map(sId => sistemas.find(s => s.id === sId)?.nome).filter(Boolean);
                     const moduleSummaryBadges = ((normalized.sistemasIds || []).map(sId => formatModuleBadge(sId)).filter(Boolean).join(' ')) || '<span class="text-xs text-slate-500">Nenhum módulo cadastrado.</span>';
                     const gerenteComercial = teamMembers.find(tm => tm.id === normalized.gerCom)?.nome || 'Não atribuído';
@@ -1249,13 +1330,13 @@
                                     <span class="text-sm font-semibold text-slate-100">${normalized.progresso}%</span>
                                 </div>
                             </div>
-                            ${resumoInfoCards}
                             <details class="bg-slate-900/40 border border-slate-700/60 rounded-lg p-3">
                                 <summary class="text-sm text-cyan-300 font-semibold cursor-pointer">Ver detalhes completos</summary>
                                 <div class="mt-3 space-y-3">
                                     ${detalhesHTML}
                                 </div>
                             </details>
+                            ${resumoInfoCards}
                             <div class="flex justify-end gap-3 pt-3 border-t border-slate-700/60">
                                 <button class="edit-btn" data-type="project" data-id="${projectId}"><i data-lucide="edit" class="text-cyan-400"></i></button>
                                 <button class="delete-btn" data-type="project" data-id="${projectId}"><i data-lucide="trash-2" class="text-red-400"></i></button>
@@ -1283,6 +1364,12 @@
                     projectCardsContainer.innerHTML += `<div class="bg-[#1E2A47] p-6 rounded-xl card-hover-effect flex flex-col justify-between relative"><div><div class="flex justify-between items-start mb-4 gap-4"><div class="pr-8"><h4 class="font-bold text-lg">${clienteNome}</h4><p class="text-sm text-slate-400">${sistemasLabel}</p></div>${statusPill}</div><div class="mb-4"><div class="text-right text-sm mt-1 mb-1">${normalized.progresso}%</div><div class="w-full bg-slate-600 rounded-full h-2.5"><div class="bg-gradient-to-r from-cyan-400 to-blue-500 h-2.5 rounded-full" style="width: ${normalized.progresso}%"></div></div></div><div class="space-y-3 text-sm text-slate-300"><div><span class="text-xs uppercase text-slate-500 block">Contrato</span><div class="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-slate-200"><span>Nº ${numeroContratoTexto}</span><span>${valorContratoTexto}</span></div></div><div><span class="text-xs uppercase text-slate-500 block">Vigência</span><div class="flex flex-wrap gap-2 items-center mt-1"><span>${vigenciaDescricaoTexto}</span>${vigenciaBadge}</div></div><div><span class="text-xs uppercase text-slate-500 block">Aditivos (${aditivos.length})</span><div class="mt-1 space-y-2">${aditivosPreview}</div></div></div>${aditivoLimiteExcedido ? '<div class="mt-4 text-xs text-amber-200 bg-amber-500/10 border border-amber-400/30 rounded-lg p-3 flex items-center gap-2"><i data-lucide="alert-triangle" class="w-4 h-4"></i><span>Total de aditivos ultrapassa 25% do valor contratual.</span></div>' : ''}</div><div class="border-t border-slate-700 pt-4 mt-4"><p class="text-sm text-slate-400 mb-2">Equipe responsável</p><div class="space-y-3">${cardTeamResumo}</div></div><div class="absolute top-4 right-4 flex flex-col gap-2"><button class="edit-btn" data-type="project" data-id="${projectId}"><i data-lucide="edit" class="text-cyan-400"></i></button><button class="delete-btn" data-type="project" data-id="${projectId}"><i data-lucide="trash-2" class="text-red-400"></i></button></div></div>`;
                 });
 
+            }
+
+            function ensureDefaultIdeias() {
+                if (!Array.isArray(ideias) || ideias.length === 0) {
+                    ideias = defaultIdeaSuggestions.map(idea => ({ ...idea }));
+                }
             }
 
             function renderContractAlerts() {
