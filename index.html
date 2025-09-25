@@ -1079,6 +1079,33 @@
 
                     const equipeSection = `<div class="bg-slate-900/40 border border-slate-700 rounded-lg p-3"><p class="text-xs uppercase tracking-wide text-slate-400">Equipe responsável</p><div class="mt-2 space-y-2">${equipeResumo}</div></div>`;
 
+                    const resumoInfoCards = `
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 text-sm text-slate-300">
+                            <div class="bg-slate-900/40 border border-slate-700/60 rounded-lg p-3 space-y-1">
+                                <span class="text-xs uppercase text-slate-500 block">Contrato</span>
+                                <span class="text-slate-100 font-semibold">Nº ${numeroContratoTexto}</span>
+                                <span class="text-xs text-slate-400">Valor: ${valorContratoTexto}</span>
+                            </div>
+                            <div class="bg-slate-900/40 border border-slate-700/60 rounded-lg p-3 space-y-1">
+                                <span class="text-xs uppercase text-slate-500 block">Vigência</span>
+                                <div class="flex flex-wrap gap-2 items-center mt-1">
+                                    <span>${vigenciaDescricaoTexto}</span>
+                                    ${vigenciaBadge}
+                                </div>
+                            </div>
+                            <div class="bg-slate-900/40 border border-slate-700/60 rounded-lg p-3 space-y-1">
+                                <span class="text-xs uppercase text-slate-500 block">Gestão</span>
+                                <div class="flex flex-col gap-1 mt-1 text-slate-200">
+                                    <span>Ger. Comercial: ${escapeHTML(gerenteComercial)}</span>
+                                    <span>Ger. Técnico: ${escapeHTML(gerenteTecnico)}</span>
+                                </div>
+                            </div>
+                            <div class="bg-slate-900/40 border border-slate-700/60 rounded-lg p-3 space-y-1">
+                                <span class="text-xs uppercase text-slate-500 block">Sistemas</span>
+                                <div class="flex flex-wrap gap-2 mt-1">${moduleSummaryBadges}</div>
+                            </div>
+                        </div>`;
+
                     const contratoCard = `<div class="bg-slate-800/60 border border-slate-700 rounded-lg p-4 space-y-3"><div class="flex items-center justify-between gap-2"><p class="text-xs uppercase tracking-wide text-slate-400">Resumo do Contrato</p>${aditivoLimiteExcedido ? '<span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full bg-amber-500/20 text-amber-200 border border-amber-500/40"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>Limite 25% excedido</span>' : ''}</div><div class="space-y-2 text-sm text-slate-300"><div><span class="text-xs uppercase text-slate-500 block">Número</span><span class="text-slate-100 font-semibold">${numeroContratoTexto}</span></div><div><span class="text-xs uppercase text-slate-500 block">Valor</span><span class="text-slate-100 font-semibold">${valorContratoTexto}</span></div><div><span class="text-xs uppercase text-slate-500 block">Total dos aditivos</span><span class="text-slate-100 font-semibold">${totalAditivosTexto}</span>${aditivoPercentualTexto ? `<span class="block text-xs text-slate-400 mt-1">${aditivoPercentualTexto}</span>` : ''}</div></div>${aditivoLimiteExcedido ? '<div class="text-xs text-amber-200 bg-amber-500/10 border border-amber-500/40 rounded-md p-2 flex items-center gap-2"><i data-lucide="shield-alert" class="w-4 h-4"></i><span>O somatório dos aditivos ultrapassa 25% do valor contratual.</span></div>' : ''}</div>`;
 
                     const gestaoCard = `<div class="bg-slate-800/60 border border-slate-700 rounded-lg p-4 space-y-3"><p class="text-xs uppercase tracking-wide text-slate-400">Gestão do Projeto</p><div class="space-y-2 text-sm text-slate-300"><div><span class="text-xs uppercase text-slate-500 block">Ger. Comercial</span><span class="text-slate-100 font-semibold">${escapeHTML(gerenteComercial)}</span></div><div><span class="text-xs uppercase text-slate-500 block">Ger. Técnico</span><span class="text-slate-100 font-semibold">${escapeHTML(gerenteTecnico)}</span></div><div><span class="text-xs uppercase text-slate-500 block">Cidade</span><span class="text-slate-100 font-semibold">${cidadeTexto}</span></div></div><div><span class="text-xs uppercase text-slate-500 block mb-1">Status atual</span>${statusPill}</div></div>`;
@@ -1110,30 +1137,7 @@
                                 </div>
                             </div>
                             ${equipeSection}
-                            <div class="space-y-3 text-sm text-slate-300">
-                                <div>
-                                    <span class="text-xs uppercase text-slate-500 block">Contrato</span>
-                                    <span class="text-slate-100 font-semibold">Nº ${numeroContratoTexto}</span>
-                                </div>
-                                <div>
-                                    <span class="text-xs uppercase text-slate-500 block">Vigência</span>
-                                    <div class="flex flex-wrap gap-2 items-center mt-1">
-                                        <span>${vigenciaDescricaoTexto}</span>
-                                        ${vigenciaBadge}
-                                    </div>
-                                </div>
-                                <div>
-                                    <span class="text-xs uppercase text-slate-500 block">Gestão</span>
-                                    <div class="flex flex-col gap-1 mt-1 text-slate-200">
-                                        <span>Ger. Comercial: ${escapeHTML(gerenteComercial)}</span>
-                                        <span>Ger. Técnico: ${escapeHTML(gerenteTecnico)}</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <span class="text-xs uppercase text-slate-500 block">Sistemas</span>
-                                    <div class="flex flex-wrap gap-2 mt-1">${moduleSummaryBadges}</div>
-                                </div>
-                            </div>
+                            ${resumoInfoCards}
                             <details class="bg-slate-900/40 border border-slate-700/60 rounded-lg p-3">
                                 <summary class="text-sm text-cyan-300 font-semibold cursor-pointer">Ver detalhes completos</summary>
                                 <div class="mt-3 space-y-3">
