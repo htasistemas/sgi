@@ -100,20 +100,9 @@
 
         /* Layout refinado para os detalhes dos projetos */
         .project-details-grid {
-            display: grid;
+            display: flex;
+            flex-direction: column;
             gap: 1.5rem;
-        }
-
-        @media (min-width: 1024px) {
-            .project-details-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-        }
-
-        @media (min-width: 1536px) {
-            .project-details-grid {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-            }
         }
 
         .project-detail-card {
