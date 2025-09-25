@@ -165,6 +165,7 @@
             flex-wrap: wrap;
             justify-content: flex-start;
             text-align: left;
+            flex-shrink: 0;
         }
 
         .due-status-badge > i {
@@ -1278,7 +1279,7 @@
                             const descricao = aditivo.descricao ? escapeHTML(aditivo.descricao) : 'Aditivo sem descrição';
                             const valor = formatCurrency(aditivo.valor, { fallback: 'Sem valor informado', allowZero: false });
                             const status = renderDueStatusBadge(getDueStatus(aditivo.validade), 'Sem validade');
-                            return `<div class="border border-slate-700 rounded-lg p-3 bg-slate-900/40 space-y-2"><div class="flex items-center justify-between gap-2"><span class="text-sm font-semibold text-slate-100">${descricao}</span>${status}</div><div><span class="text-xs uppercase text-slate-500 block">Valor</span><span class="text-sm text-slate-100">${valor}</span></div></div>`;
+                            return `<div class="border border-slate-700 rounded-lg p-3 bg-slate-900/40 space-y-2"><div class="flex flex-wrap items-center justify-between gap-2"><span class="text-sm font-semibold text-slate-100">${descricao}</span>${status}</div><div><span class="text-xs uppercase text-slate-500 block">Valor</span><span class="text-sm text-slate-100">${valor}</span></div></div>`;
                         }).join('')
                         : '';
 
